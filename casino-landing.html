@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuds to Chads Casino - Transform Your Fortune</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Russo+One&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+          --neon-green: #00ff41;
+          --gold: #ffd700;
+          --deep-purple: #1a0933;
+          --dark-bg: #0a0118;
+          --card-red: #ff2e63;
+          --electric-blue: #00d4ff;
+        }
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          overflow-x: hidden;
+        }
+
+        .casino-container {
+          min-height: 100vh;
+          background: linear-gradient(135deg, var(--dark-bg) 0%, var(--deep-purple) 100%);
+          color: white;
+          font-family: 'Outfit', sans-serif;
+          position: relative;
+          overflow: hidden;
+        }
+
+        /* Animated Background Grid */
+        .casino-container::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: 
+            linear-gradient(var(--neon-green) 1px, transparent 1px),
+            linear-gradient(90deg, var(--neon-green) 1px, transparent 1px);
+          background-size: 100px 100px;
+          opacity: 0.03;
+          animation: gridScroll 20s linear infinite;
+        }
+
+        @keyframes gridScroll {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(100px); }
+        }
+
+        /* Floating Casino Elements */
+        .floating-elements {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          overflow: hidden;
+        }
+
+        .floating-card, .floating-chip {
+          position: absolute;
+          opacity: 0.15;
+          animation: float 15s infinite ease-in-out;
+          font-size: 4rem;
+        }
+
+        .floating-card:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-card:nth-child(2) { top: 70%; right: 15%; animation-delay: 5s; }
+        .floating-chip:nth-child(3) { top: 30%; right: 20%; animation-delay: 2s; font-size: 3rem; }
+        .floating-chip:nth-child(4) { bottom: 20%; left: 25%; animation-delay: 7s; font-size: 3rem; }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        /* Header */
+        .header {
+          position: relative;
+          padding: 1.5rem 5%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          z-index: 100;
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid rgba(0, 255, 65, 0.1);
+        }
+
+        .logo {
+          font-family: 'Russo One', sans-serif;
+          font-size: 1.8rem;
+          letter-spacing: 2px;
+          background: linear-gradient(135deg, var(--neon-green), var(--gold));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          text-transform: uppercase;
+          filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.5));
+          animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+          from { filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.3)); }
+          to { filter: drop-shadow(0 0 25px rgba(0, 255, 65, 0.7)); }
+        }
+
+        .nav-buttons {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .btn {
+          padding: 0.75rem 2rem;
+          border: none;
+          border-radius: 8px;
+          font-family: 'Outfit', sans-serif;
+          font-weight: 600;
+          font-size: 1rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .btn-secondary {
+          background: transparent;
+          color: var(--neon-green);
+          border: 2px solid var(--neon-green);
+        }
+
+        .btn-secondary:hover {
+          background: var(--neon-green);
+          color: var(--dark-bg);
+          box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+          transform: translateY(-2px);
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, var(--neon-green), var(--gold));
+          color: var(--dark-bg);
+          font-weight: 700;
+          box-shadow: 0 8px 30px rgba(0, 255, 65, 0.4);
+        }
+
+        .btn-primary:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 12px 40px rgba(0, 255, 65, 0.6);
+        }
+
+        /* Hero Section */
+        .hero {
+          position: relative;
+          padding: 8rem 5% 6rem;
+          text-align: center;
+          z-index: 10;
+        }
+
+        .transformation-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.6rem 1.5rem;
+          background: rgba(0, 255, 65, 0.1);
+          border: 1px solid var(--neon-green);
+          border-radius: 50px;
+          font-size: 0.9rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 2rem;
+          animation: fadeInUp 0.8s ease-out;
+        }
+
+        .sparkle-icon {
+          width: 18px;
+          height: 18px;
+          display: inline-block;
+        }
+
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(3rem, 8vw, 7rem);
+          line-height: 0.95;
+          margin-bottom: 1.5rem;
+          letter-spacing: 3px;
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-title .from {
+          color: var(--card-red);
+          display: block;
+          font-size: 0.7em;
+          opacity: 0.8;
+        }
+
+        .hero-title .arrow {
+          color: var(--gold);
+          display: inline-block;
+          margin: 0 1rem;
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+
+        .hero-title .to {
+          background: linear-gradient(135deg, var(--neon-green), var(--gold));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          display: block;
+          filter: drop-shadow(0 0 30px rgba(0, 255, 65, 0.5));
+        }
+
+        .hero-subtitle {
+          font-size: 1.3rem;
+          color: rgba(255, 255, 255, 0.8);
+          max-width: 600px;
+          margin: 0 auto 3rem;
+          line-height: 1.6;
+          animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-cta {
+          display: flex;
+          gap: 1.5rem;
+          justify-content: center;
+          flex-wrap: wrap;
+          animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .btn-hero {
+          padding: 1.2rem 3rem;
+          font-size: 1.2rem;
+        }
+
+        /* Chip Display */
+        .chip-display {
+          margin: 4rem auto;
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          flex-wrap: wrap;
+          animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .chip {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Russo One', sans-serif;
+          font-size: 1.5rem;
+          border: 6px solid;
+          transition: all 0.3s ease;
+          position: relative;
+        }
+
+        .chip::before {
+          content: '';
+          position: absolute;
+          top: -3px;
+          left: -3px;
+          right: -3px;
+          bottom: -3px;
+          border-radius: 50%;
+          background: inherit;
+          filter: blur(20px);
+          opacity: 0.5;
+          z-index: -1;
+        }
+
+        .chip.active {
+          transform: scale(1.15);
+          box-shadow: 0 0 40px currentColor;
+        }
+
+        .chip-green {
+          background: linear-gradient(135deg, #00ff41, #00cc33);
+          border-color: #00ff41;
+          color: var(--dark-bg);
+        }
+
+        .chip-gold {
+          background: linear-gradient(135deg, #ffd700, #ffaa00);
+          border-color: #ffd700;
+          color: var(--dark-bg);
+        }
+
+        .chip-red {
+          background: linear-gradient(135deg, #ff2e63, #cc0033);
+          border-color: #ff2e63;
+          color: white;
+        }
+
+        .chip small {
+          font-size: 0.7rem;
+          margin-top: 0.3rem;
+        }
+
+        /* Features Section */
+        .features {
+          padding: 6rem 5%;
+          position: relative;
+          z-index: 10;
+        }
+
+        .features-header {
+          text-align: center;
+          margin-bottom: 4rem;
+        }
+
+        .section-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          letter-spacing: 2px;
+          margin-bottom: 1rem;
+          background: linear-gradient(135deg, white, var(--neon-green));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .section-subtitle {
+          font-size: 1.2rem;
+          color: rgba(255, 255, 255, 0.7);
+        }
+
+        .features-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 2rem;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .feature-card {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(0, 255, 65, 0.2);
+          border-radius: 16px;
+          padding: 2.5rem;
+          transition: all 0.4s ease;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .feature-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, var(--neon-green), var(--gold));
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover {
+          transform: translateY(-10px);
+          border-color: var(--neon-green);
+          background: rgba(0, 255, 65, 0.05);
+          box-shadow: 0 20px 60px rgba(0, 255, 65, 0.2);
+        }
+
+        .feature-card:hover::before {
+          transform: scaleX(1);
+        }
+
+        .feature-icon {
+          width: 60px;
+          height: 60px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, var(--neon-green), var(--gold));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1.5rem;
+          color: var(--dark-bg);
+          font-size: 2rem;
+        }
+
+        .feature-title {
+          font-family: 'Russo One', sans-serif;
+          font-size: 1.5rem;
+          margin-bottom: 1rem;
+          color: var(--neon-green);
+        }
+
+        .feature-description {
+          color: rgba(255, 255, 255, 0.7);
+          line-height: 1.6;
+        }
+
+        /* Games Section */
+        .games {
+          padding: 6rem 5%;
+          background: rgba(0, 0, 0, 0.3);
+          position: relative;
+          z-index: 10;
+        }
+
+        .games-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 2.5rem;
+          max-width: 1200px;
+          margin: 3rem auto 0;
+        }
+
+        .game-card {
+          background: linear-gradient(135deg, rgba(26, 9, 51, 0.8), rgba(10, 1, 24, 0.8));
+          border: 2px solid rgba(0, 255, 65, 0.3);
+          border-radius: 20px;
+          overflow: hidden;
+          transition: all 0.4s ease;
+          cursor: pointer;
+        }
+
+        .game-card:hover {
+          transform: scale(1.05);
+          border-color: var(--neon-green);
+          box-shadow: 0 25px 70px rgba(0, 255, 65, 0.3);
+        }
+
+        .game-image {
+          height: 200px;
+          background: linear-gradient(135deg, var(--card-red), var(--deep-purple));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 4rem;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .game-image::before {
+          content: '♠ ♥ ♦ ♣';
+          position: absolute;
+          font-size: 6rem;
+          opacity: 0.1;
+          animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+
+        .game-content {
+          padding: 2rem;
+        }
+
+        .game-title {
+          font-family: 'Russo One', sans-serif;
+          font-size: 1.8rem;
+          margin-bottom: 0.5rem;
+          color: var(--gold);
+        }
+
+        .game-description {
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 1.5rem;
+          line-height: 1.5;
+        }
+
+        .game-stats {
+          display: flex;
+          justify-content: space-between;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat {
+          text-align: center;
+        }
+
+        .stat-value {
+          font-family: 'Russo One', sans-serif;
+          font-size: 1.5rem;
+          color: var(--neon-green);
+          display: block;
+        }
+
+        .stat-label {
+          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        /* CTA Section */
+        .final-cta {
+          padding: 8rem 5%;
+          text-align: center;
+          position: relative;
+          z-index: 10;
+        }
+
+        .final-cta-content {
+          max-width: 700px;
+          margin: 0 auto;
+          padding: 4rem;
+          background: rgba(0, 255, 65, 0.05);
+          border: 2px solid var(--neon-green);
+          border-radius: 24px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .final-cta-content::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(
+            45deg,
+            transparent,
+            rgba(0, 255, 65, 0.1),
+            transparent
+          );
+          animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        .final-cta h2 {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(2rem, 5vw, 3.5rem);
+          margin-bottom: 1rem;
+          letter-spacing: 2px;
+          position: relative;
+        }
+
+        .final-cta p {
+          font-size: 1.2rem;
+          color: rgba(255, 255, 255, 0.8);
+          margin-bottom: 2.5rem;
+          position: relative;
+        }
+
+        /* Footer */
+        .footer {
+          padding: 3rem 5%;
+          background: rgba(0, 0, 0, 0.5);
+          border-top: 1px solid rgba(0, 255, 65, 0.2);
+          text-align: center;
+          position: relative;
+          z-index: 10;
+        }
+
+        .footer-content {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .footer-text {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 0.9rem;
+          line-height: 1.6;
+        }
+
+        .footer-disclaimer {
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .hero {
+            padding: 5rem 5% 4rem;
+          }
+
+          .hero-title {
+            font-size: 3rem;
+          }
+
+          .chip-display {
+            gap: 1rem;
+          }
+
+          .chip {
+            width: 90px;
+            height: 90px;
+            font-size: 1.2rem;
+          }
+
+          .nav-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .btn {
+            padding: 0.6rem 1.5rem;
+            font-size: 0.9rem;
+          }
+        }
+    </style>
+</head>
+<body>
+    <div class="casino-container">
+        <div class="floating-elements">
+            <div class="floating-card">🂡</div>
+            <div class="floating-card">🃁</div>
+            <div class="floating-chip">⬤</div>
+            <div class="floating-chip">⬤</div>
+        </div>
+
+        <header class="header">
+            <div class="logo">
+                C2C Casino
+            </div>
+            <div class="nav-buttons">
+                <button class="btn btn-secondary">Login</button>
+                <button class="btn btn-primary">Sign Up</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="transformation-badge">
+                <svg class="sparkle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+                Transform Your Fortune
+            </div>
+            
+            <h1 class="hero-title">
+                <span class="from">From Chuds</span>
+                <span class="arrow">→</span>
+                <span class="to">To Chads</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                Level up your game at the most electrifying online casino. Play multiplayer blackjack, 
+                poker, and more. No risk, pure thrill, all skill.
+            </p>
+            
+            <div class="hero-cta">
+                <button class="btn btn-primary btn-hero">Start Playing Free</button>
+                <button class="btn btn-secondary btn-hero">View Games</button>
+            </div>
+
+            <div class="chip-display">
+                <div class="chip chip-green" id="chip1">
+                    <span>$100</span>
+                    <small>STARTER</small>
+                </div>
+                <div class="chip chip-gold" id="chip2">
+                    <span>$500</span>
+                    <small>PRO</small>
+                </div>
+                <div class="chip chip-red" id="chip3">
+                    <span>$1000</span>
+                    <small>CHAD</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="features-header">
+                <h2 class="section-title">Why Go Chad?</h2>
+                <p class="section-subtitle">Experience the ultimate in online gaming</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Multiplayer Action</h3>
+                    <p class="feature-description">
+                        Face off against real players in live blackjack and poker rooms. Build your reputation 
+                        and climb the leaderboards.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Instant Play</h3>
+                    <p class="feature-description">
+                        No downloads, no waiting. Jump straight into the action with our lightning-fast 
+                        platform built for speed.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Level Up System</h3>
+                    <p class="feature-description">
+                        Start as a Chud, earn your way to Chad status. Unlock exclusive games, avatars, 
+                        and bragging rights.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="games">
+            <div class="features-header">
+                <h2 class="section-title">Choose Your Game</h2>
+                <p class="section-subtitle">Master the classics or try something new</p>
+            </div>
+            
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-image">
+                        <span>🂡</span>
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">Blackjack</h3>
+                        <p class="game-description">
+                            Classic 21. Beat the dealer in this timeless card game with perfect odds and pure strategy.
+                        </p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-value">247</span>
+                                <span class="stat-label">Online</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">2-6</span>
+                                <span class="stat-label">Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">Fast</span>
+                                <span class="stat-label">Pace</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-image" style="background: linear-gradient(135deg, #1a0933, #00d4ff);">
+                        <span>🃏</span>
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">Texas Hold'em</h3>
+                        <p class="game-description">
+                            The ultimate poker showdown. Read your opponents, bluff big, and take down the pot.
+                        </p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-value">183</span>
+                                <span class="stat-label">Online</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">2-9</span>
+                                <span class="stat-label">Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">Strategic</span>
+                                <span class="stat-label">Pace</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-card">
+                    <div class="game-image" style="background: linear-gradient(135deg, #ffd700, #ff2e63);">
+                        <span>🎰</span>
+                    </div>
+                    <div class="game-content">
+                        <h3 class="game-title">Coming Soon</h3>
+                        <p class="game-description">
+                            More games on the horizon. Roulette, slots, and exclusive tournaments are coming to level up your experience.
+                        </p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-value">Soon</span>
+                                <span class="stat-label">Status</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">???</span>
+                                <span class="stat-label">Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">TBD</span>
+                                <span class="stat-label">Pace</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-cta">
+            <div class="final-cta-content">
+                <h2>Ready to Make the Transformation?</h2>
+                <p>Join thousands of players leveling up their game. Start with free chips and play your way to the top.</p>
+                <button class="btn btn-primary btn-hero">Create Your Account</button>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <p class="footer-text">
+                    <strong>Chuds to Chads Casino</strong> - Where Chuds become Chads
+                </p>
+                <p class="footer-disclaimer">
+                    This is a school project for educational purposes only. No real money transactions occur. 
+                    All currency is virtual and for entertainment only. Must be 18+ to play.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Chip rotation animation
+        let currentChip = 0;
+        const chips = [
+            document.getElementById('chip1'),
+            document.getElementById('chip2'),
+            document.getElementById('chip3')
+        ];
+
+        function rotateChips() {
+            chips.forEach(chip => chip.classList.remove('active'));
+            chips[currentChip].classList.add('active');
+            currentChip = (currentChip + 1) % chips.length;
+        }
+
+        // Initialize first chip as active
+        chips[0].classList.add('active');
+
+        // Rotate every 3 seconds
+        setInterval(rotateChips, 3000);
+
+        // Smooth scroll for navigation (if you add anchor links later)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

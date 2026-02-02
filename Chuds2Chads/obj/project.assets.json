@@ -8,19 +8,19 @@
     "net9.0": []
   },
   "packageFolders": {
-    "C:\\Users\\llitz\\.nuget\\packages\\": {}
+    "C:\\Users\\Wade\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\llitz\\Documents\\GitHub\\SE2-Project---Casino\\Chuds2Chads\\Chuds2Chads.csproj",
+      "projectUniqueName": "C:\\Users\\Wade\\Documents\\casino project\\SE2-Project---Casino\\Chuds2Chads\\Chuds2Chads.csproj",
       "projectName": "Chuds2Chads",
-      "projectPath": "C:\\Users\\llitz\\Documents\\GitHub\\SE2-Project---Casino\\Chuds2Chads\\Chuds2Chads.csproj",
-      "packagesPath": "C:\\Users\\llitz\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\llitz\\Documents\\GitHub\\SE2-Project---Casino\\Chuds2Chads\\obj\\",
+      "projectPath": "C:\\Users\\Wade\\Documents\\casino project\\SE2-Project---Casino\\Chuds2Chads\\Chuds2Chads.csproj",
+      "packagesPath": "C:\\Users\\Wade\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Wade\\Documents\\casino project\\SE2-Project---Casino\\Chuds2Chads\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\llitz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Wade\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -28,7 +28,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
