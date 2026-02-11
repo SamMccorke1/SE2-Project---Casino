@@ -1,0 +1,286 @@
+@page "/"
+@using System.Timers
+
+<PageTitle>Chuds to Chads Casino - Transform Your Fortune</PageTitle>
+
+<div class="casino-container">
+    <div class="floating-elements">
+        <div class="floating-card">🂡</div>
+        <div class="floating-card">🃁</div>
+        <div class="floating-chip">⬤</div>
+        <div class="floating-chip">⬤</div>
+    </div>
+
+    <header class="header">
+        <div class="logo">
+            C2C Casino
+        </div>
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" @onclick="HandleLogin">Login</button>
+            <button class="btn btn-primary" @onclick="HandleSignUp">Sign Up</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="transformation-badge">
+            <svg class="sparkle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+            Transform Your Fortune
+        </div>
+        
+        <h1 class="hero-title">
+            <span class="from">From Chuds</span>
+            <span class="arrow">→</span>
+            <span class="to">To Chads</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+            Level up your game at the most electrifying online casino. Play multiplayer blackjack, 
+            poker, and more. No risk, pure thrill, all skill.
+        </p>
+        
+        <div class="hero-cta">
+            <button class="btn btn-primary btn-hero" @onclick="HandleStartPlaying">Start Playing Free</button>
+            <button class="btn btn-secondary btn-hero" @onclick="HandleViewGames">View Games</button>
+        </div>
+
+        <div class="chip-display">
+            <div class="chip chip-green @(currentChipIndex == 0 ? "active" : "")">
+                <span>$100</span>
+                <small>STARTER</small>
+            </div>
+            <div class="chip chip-gold @(currentChipIndex == 1 ? "active" : "")">
+                <span>$500</span>
+                <small>PRO</small>
+            </div>
+            <div class="chip chip-red @(currentChipIndex == 2 ? "active" : "")">
+                <span>$1000</span>
+                <small>CHAD</small>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="features-header">
+            <h2 class="section-title">Why Go Chad?</h2>
+            <p class="section-subtitle">Experience the ultimate in online gaming</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Multiplayer Action</h3>
+                <p class="feature-description">
+                    Face off against real players in live blackjack and poker rooms. Build your reputation 
+                    and climb the leaderboards.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Instant Play</h3>
+                <p class="feature-description">
+                    No downloads, no waiting. Jump straight into the action with our lightning-fast 
+                    platform built for speed.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="32" height="32">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Level Up System</h3>
+                <p class="feature-description">
+                    Start as a Chud, earn your way to Chad status. Unlock exclusive games, avatars, 
+                    and bragging rights.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="games">
+        <div class="features-header">
+            <h2 class="section-title">Choose Your Game</h2>
+            <p class="section-subtitle">Master the classics or try something new</p>
+        </div>
+        
+        <div class="games-grid">
+            <div class="game-card" @onclick='() => HandleGameClick("Blackjack")'>
+                <div class="game-image">
+                    <span>🂡</span>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Blackjack</h3>
+                    <p class="game-description">
+                        Classic 21. Beat the dealer in this timeless card game with perfect odds and pure strategy.
+                    </p>
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-value">247</span>
+                            <span class="stat-label">Online</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">2-6</span>
+                            <span class="stat-label">Players</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">Fast</span>
+                            <span class="stat-label">Pace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-card" @onclick="HandlePokerClick">
+                <div class="game-image game-image-poker">
+                    <span>🃏</span>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Texas Hold'em</h3>
+                    <p class="game-description">
+                        The ultimate poker showdown. Read your opponents, bluff big, and take down the pot.
+                    </p>
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-value">183</span>
+                            <span class="stat-label">Online</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">2-9</span>
+                            <span class="stat-label">Players</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">Strategic</span>
+                            <span class="stat-label">Pace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-image game-image-soon">
+                    <span>🎰</span>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Coming Soon</h3>
+                    <p class="game-description">
+                        More games on the horizon. Roulette, slots, and exclusive tournaments are coming to level up your experience.
+                    </p>
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-value">Soon</span>
+                            <span class="stat-label">Status</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">???</span>
+                            <span class="stat-label">Players</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">TBD</span>
+                            <span class="stat-label">Pace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <div class="final-cta-content">
+            <h2>Ready to Make the Transformation?</h2>
+            <p>Join thousands of players leveling up their game. Start with free chips and play your way to the top.</p>
+            <button class="btn btn-primary btn-hero" @onclick="HandleCreateAccount">Create Your Account</button>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                <strong>Chuds to Chads Casino</strong> - Where Chuds become Chads
+            </p>
+            <p class="footer-disclaimer">
+                This is a school project for educational purposes only. No real money transactions occur. 
+                All currency is virtual and for entertainment only. Must be 18+ to play.
+            </p>
+        </div>
+    </footer>
+</div>
+
+@code {
+    private int currentChipIndex = 0;
+    private Timer? chipRotationTimer;
+
+    protected override void OnInitialized()
+    {
+        // Initialize chip rotation timer
+        chipRotationTimer = new Timer(3000); // 3 seconds
+        chipRotationTimer.Elapsed += RotateChips;
+        chipRotationTimer.AutoReset = true;
+        chipRotationTimer.Start();
+    }
+
+    private void RotateChips(object? sender, ElapsedEventArgs e)
+    {
+        currentChipIndex = (currentChipIndex + 1) % 3;
+        InvokeAsync(StateHasChanged);
+    }
+
+    // Event handlers for buttons
+    private void HandleLogin()
+    {
+        // TODO: Navigate to login page or show login modal
+        Console.WriteLine("Login clicked");
+    }
+
+    private void HandleSignUp()
+    {
+        // TODO: Navigate to sign up page or show registration modal
+        Console.WriteLine("Sign Up clicked");
+    }
+
+    private void HandleStartPlaying()
+    {
+        // TODO: Navigate to game selection or create account
+        Console.WriteLine("Start Playing clicked");
+    }
+
+    private void HandleViewGames()
+    {
+        // TODO: Scroll to games section or navigate to games page
+        Console.WriteLine("View Games clicked");
+    }
+
+    private void HandleGameClick(string gameName)
+    {
+        // TODO: Navigate to specific game
+        Console.WriteLine($"{gameName} clicked");
+    }
+
+    private void HandlePokerClick()
+    {
+        HandleGameClick("Texas Hold'em");
+    }
+
+    private void HandleCreateAccount()
+    {
+        // TODO: Navigate to registration page or show sign up modal
+        Console.WriteLine("Create Account clicked");
+    }
+
+    public void Dispose()
+    {
+        chipRotationTimer?.Stop();
+        chipRotationTimer?.Dispose();
+    }
+}
