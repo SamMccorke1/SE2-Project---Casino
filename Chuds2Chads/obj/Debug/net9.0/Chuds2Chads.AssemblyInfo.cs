@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Chuds2Chads")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+87af28d6c1584e5a7f0fc6386aa8c996cd2be701")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+893a31880c34def46bb77cde5ad42bea595e5d1f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Chuds2Chads")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Chuds2Chads")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
