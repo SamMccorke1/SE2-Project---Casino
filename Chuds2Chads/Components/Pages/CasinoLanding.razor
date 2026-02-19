@@ -1,5 +1,7 @@
 @page "/"
+@rendermode InteractiveServer
 @using System.Timers
+@inject NavigationManager Nav
 
 <PageTitle>Chuds to Chads Casino - Transform Your Fortune</PageTitle>
 
@@ -116,7 +118,7 @@
         </div>
         
         <div class="games-grid">
-            <div class="game-card" @onclick='() => HandleGameClick("Blackjack")'>
+            <div class="game-card" @onclick='() => HandleGameClick("blackjack")'>
                 <div class="game-image">
                     <span>🂡</span>
                 </div>
@@ -168,26 +170,81 @@
                 </div>
             </div>
             
-            <div class="game-card">
-                <div class="game-image game-image-soon">
-                    <span>🎰</span>
+            @* Roulette -- uses .game-image-roulette from CasinoLanding.razor.css *@
+            <div class="game-card" @onclick='() => HandleGameClick("roulette")'>
+                <div class="game-image game-image-roulette">
+                    <span>🎡</span>
                 </div>
                 <div class="game-content">
-                    <h3 class="game-title">Coming Soon</h3>
+                    <h3 class="game-title">Roulette</h3>
                     <p class="game-description">
-                        More games on the horizon. Roulette, slots, and exclusive tournaments are coming to level up your experience.
+                        Spin the wheel and chase the number. Red, black, or lucky 0 — every spin is a rush.
                     </p>
                     <div class="game-stats">
                         <div class="stat">
-                            <span class="stat-value">Soon</span>
-                            <span class="stat-label">Status</span>
+                            <span class="stat-value">1</span>
+                            <span class="stat-label">Player</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-value">???</span>
-                            <span class="stat-label">Players</span>
+                            <span class="stat-value">35:1</span>
+                            <span class="stat-label">Max Pay</span>
                         </div>
                         <div class="stat">
-                            <span class="stat-value">TBD</span>
+                            <span class="stat-value">Fast</span>
+                            <span class="stat-label">Pace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Slots -- uses .game-image-slots from CasinoLanding.razor.css *@
+            <div class="game-card" @onclick='() => HandleGameClick("slots")'>
+                <div class="game-image game-image-slots">
+                    <span>🎰</span>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Slots</h3>
+                    <p class="game-description">
+                        Three reels, one payline, and a jackpot waiting for you. Match the sevens and clean up.
+                    </p>
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-value">1</span>
+                            <span class="stat-label">Player</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">50×</span>
+                            <span class="stat-label">Jackpot</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">Instant</span>
+                            <span class="stat-label">Pace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Horse Race -- uses .game-image-horse from CasinoLanding.razor.css *@
+            <div class="game-card" @onclick='() => HandleGameClick("horserace")'>
+                <div class="game-image game-image-horse">
+                    <span>🏇</span>
+                </div>
+                <div class="game-content">
+                    <h3 class="game-title">Horse Race</h3>
+                    <p class="game-description">
+                        Six horses, one winner. Back your horse, watch the race, and collect your winnings.
+                    </p>
+                    <div class="game-stats">
+                        <div class="stat">
+                            <span class="stat-value">1</span>
+                            <span class="stat-label">Player</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">7:1</span>
+                            <span class="stat-label">Best Odds</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">Quick</span>
                             <span class="stat-label">Pace</span>
                         </div>
                     </div>
@@ -239,32 +296,33 @@
     // Event handlers for buttons
     private void HandleLogin()
     {
-        // TODO: Navigate to login page or show login modal
+        // TODO: Navigate to login page or show login modal - Nav.NavigateTo("/login") once login page exists
         Console.WriteLine("Login clicked");
     }
 
     private void HandleSignUp()
     {
-        // TODO: Navigate to sign up page or show registration modal
+        // TODO: Navigate to sign up page or show registration modal - Nav.NavigateTo("/register") once registration page exists
         Console.WriteLine("Sign Up clicked");
     }
 
-    private void HandleStartPlaying()
-    {
-        // TODO: Navigate to game selection or create account
-        Console.WriteLine("Start Playing clicked");
-    }
+    /// <summary>
+    /// Routes a game card click to the correct game page.
+    /// Pass the route segment: "/games/roulette", "/games/slots", "/games/horserace", "/games/blackjack", "/games/poker".
+    /// </summary>
+    private void HandleGameClick(string route) =>
+        Nav.NavigateTo($"/games/{route}");
+
+    /// <summary>
+    /// Navigates to the slots game page as a fun "start playing free" option since slots is the most instantly playable game and doesn't require learning rules or strategy. 
+    /// </summary>
+    private void HandleStartPlaying() =>
+        Nav.NavigateTo("/games/slots");
 
     private void HandleViewGames()
     {
-        // TODO: Scroll to games section or navigate to games page
+        // TODO: Scroll to games section or navigate to games page - JS interop scroll to #games once that is set up
         Console.WriteLine("View Games clicked");
-    }
-
-    private void HandleGameClick(string gameName)
-    {
-        // TODO: Navigate to specific game
-        Console.WriteLine($"{gameName} clicked");
     }
 
     private void HandlePokerClick()
@@ -274,7 +332,7 @@
 
     private void HandleCreateAccount()
     {
-        // TODO: Navigate to registration page or show sign up modal
+        // TODO: Navigate to registration page or show sign up modal - Nav.NavigateTo("/register") once registration page exists
         Console.WriteLine("Create Account clicked");
     }
 
