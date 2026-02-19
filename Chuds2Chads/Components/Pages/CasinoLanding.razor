@@ -1,5 +1,8 @@
 @page "/"
 @using System.Timers
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@rendermode InteractiveServer
+
 
 <PageTitle>Chuds to Chads Casino - Transform Your Fortune</PageTitle>
 
@@ -12,9 +15,9 @@
     </div>
 
     <header class="header">
-        <div class="logo">
-            C2C Casino
-        </div>
+        <NavLink href="/" class="logo-link">
+                <img src="/images/C2C-Logo-Transparent.png" alt="C2C Casino" class="logo-image" />
+        </NavLink>
         <div class="nav-buttons">
             <button class="btn btn-secondary" @onclick="HandleLogin">Login</button>
             <button class="btn btn-primary" @onclick="HandleSignUp">Sign Up</button>
@@ -218,6 +221,8 @@
 </div>
 
 @code {
+
+    [Inject] private NavigationManager Navigation {get; set;} = default!;
     private int currentChipIndex = 0;
     private Timer? chipRotationTimer;
 
@@ -239,16 +244,13 @@
     // Event handlers for buttons
     private void HandleLogin()
     {
-        // TODO: Navigate to login page or show login modal
-        Console.WriteLine("Login clicked");
+         Navigation.NavigateTo("/login");
     }
 
-    private void HandleSignUp()
+    private void HandleSignUp() 
     {
-        // TODO: Navigate to sign up page or show registration modal
-        Console.WriteLine("Sign Up clicked");
+        Navigation.NavigateTo("/register");
     }
-
     private void HandleStartPlaying()
     {
         // TODO: Navigate to game selection or create account
@@ -274,8 +276,7 @@
 
     private void HandleCreateAccount()
     {
-        // TODO: Navigate to registration page or show sign up modal
-        Console.WriteLine("Create Account clicked");
+        Navigation.NavigateTo("/register");
     }
 
     public void Dispose()
