@@ -111,17 +111,28 @@
     border-bottom: 1px solid rgba(0, 255, 65, 0.1);
 }
 
-.logo {
-    font-family: 'Russo One', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, var(--neon-green), var(--gold));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-transform: uppercase;
+.logo-link {
+    display: inline-block;
+    text-decoration: none;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+}
+
+.logo-image {
+    height: 80px;
+    width: auto;
+    display: block;
     filter: drop-shadow(0 0 20px rgba(0, 255, 65, 0.5));
-    animation: glow 2s ease-in-out infinite alternate;
+    animation: logoGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+    from { filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.3)); }
+    to   { filter: drop-shadow(0 0 30px rgba(0, 255, 65, 0.8)); }
 }
 
 @keyframes glow {
