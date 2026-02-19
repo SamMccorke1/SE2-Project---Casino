@@ -119,7 +119,7 @@
         </div>
         
         <div class="games-grid">
-            <div class="game-card" @onclick='() => HandleGameClick("Blackjack")'>
+            <div class="game-card" @onclick='HandleBlackjackClick'>
                 <div class="game-image">
                     <span>🂡</span>
                 </div>
@@ -265,13 +265,18 @@
 
     private void HandleGameClick(string gameName)
     {
-        // TODO: Navigate to specific game
-        Console.WriteLine($"{gameName} clicked");
+       Navigation.NavigateTo($"{gameName}lobby");
     }
+
 
     private void HandlePokerClick()
     {
-        HandleGameClick("Texas Hold'em");
+        HandleGameClick("texas");
+    }
+
+    private void HandleBlackjackClick()
+    {
+        HandleGameClick("blackjack");
     }
 
     private void HandleCreateAccount()
