@@ -2,12 +2,15 @@ using Chuds2Chads.Components;
 using Chuds2Chads.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Chuds2Chads.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // UI
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+// Lobby service
+   builder.Services.AddSingleton<LobbyService>();
 
 // Needed for Identity endpoints (Razor Pages)
 builder.Services.AddRazorPages();
