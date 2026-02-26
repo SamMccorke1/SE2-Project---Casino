@@ -1,28 +1,33 @@
-@page "/blackjack-game/{LobbyName}"
+@page "/blackjack-game/{BlackjackLobbyId}"
 @inject NavigationManager Navigation
-@using Chuds2Chads.Games.Blackjack
 
 <button @onclick="ReturnHome" style="position:absolute; top:10px; left:10px;">Home</button>
 
-<h3>Blackjack - Lobby: @LobbyName</h3>
+<h3>Blackjack - Lobby: @BlackjackLobbyId</h3>
 
 <div class="table">
     <div class="dealer-area">
-        @foreach(var card in Game.Dealer.Hand.Select((value,index) => new {value,index}))
+        @if(GameInstance != null)
         {
-            <img src="@(index==1 && !Game.DealerRevealed ? Card.CardBackPath : card.value.ImagePath)" class="card @(index==1 && !Game.DealerRevealed ? "" : "deal")" />
+            @foreach(var card in GameInstance.Dealer.Hand)
+            {
+                <img src="@card.ImagePath" class="card deal" />
+            }
         }
     </div>
 
     <div class="player-area">
-        @foreach(var card in Game.CurrentPlayer.Hand)
+        @if(GameInstance != null && GameInstance.CurrentPlayer != null)
         {
-            <img src="@card.ImagePath" class="card deal" />
+            @foreach(var card in GameInstance.CurrentPlayer.Hand)
+            {
+                <img src="@card.ImagePath" class="card deal" />
+            }
         }
     </div>
 
     <div class="game-buttons">
-        @if(Game.Phase == GamePhase.PlayerTurn)
+        @if(GameInstance != null && GameInstance.Phase == GamePhase.PlayerTurn)
         {
             <button class="hit-btn" @onclick="Hit">Hit</button>
             <button class="stand-btn" @onclick="Stand">Stand</button>
@@ -31,24 +36,30 @@
 </div>
 
 @code {
-    [Parameter] public string BlackjackLobby { get; set; }
+    [Parameter] public string? BlackjackLobbyId { get; set; }
 
-    private BlackjackGame Game;
+    private Chuds2Chads.Games.Blackjack.BlackjackGame? GameInstance;
 
     protected override void OnInitialized()
     {
-        Game = new BlackjackGame(new List<string> { "Player1" }); // only current user for now
+        GameInstance = new Chuds2Chads.Games.Blackjack.BlackjackGame(new List<string> { "Player1" }); // only current user for now
     }
 
     private void Hit()
     {
-        Game.PlayerHit();
+        GameInstance?.PlayerHit();
     }
 
     private void Stand()
     {
-        Game.PlayerStand();
+        GameInstance?.PlayerStand();
     }
+
+    private void ReturnHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
 
     private void ReturnHome()
     {

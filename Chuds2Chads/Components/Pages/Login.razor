@@ -1,6 +1,8 @@
 @page "/login"
 @rendermode InteractiveServer
+@using System.Net
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <PageTitle>Login - Chuds to Chads Casino</PageTitle>
 
@@ -143,6 +145,13 @@
     private bool isLoading = false;
     private bool showPassword = false;
 
+    private sealed class LoginResult
+    {
+        public bool Ok { get; set; }
+        public int Status { get; set; }
+        public string? Text { get; set; }
+    }
+
     private void TogglePassword() => showPassword = !showPassword;
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
@@ -163,19 +172,44 @@
         isLoading = true;
         StateHasChanged();
 
-        // TODO: Replace with your actual authentication logic
-        await Task.Delay(1000); // Simulated network request
+        try
+        {
+            var result = await JS.InvokeAsync<LoginResult>("auth.login", username, password);
 
-        // TODO: Check credentials against your database/service
-        // Example:
-        // var result = await AuthService.LoginAsync(username, password);
-        // if (result.Success)
-        //     NavigationManager.NavigateTo("/lobby");
-        // else
-        //     errorMessage = "Invalid username or password.";
-
-        // Placeholder: always fail until auth is implemented
-        errorMessage = "Invalid username or password.";
-        isLoading = false;
+            if (result.Ok)
+            {
+                Console.WriteLine($"Login response received: {result.Text}");
+                
+                // Short delay to ensure cookie is set in the browser
+                await Task.Delay(200);
+                
+                // Navigate to home - new circuit will send auth cookie
+                Console.WriteLine("Redirecting to home with forceLoad=true");
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(result.Text))
+                {
+                    errorMessage = $"Login failed: {result.Text}";
+                }
+                else if (result.Status == (int)HttpStatusCode.Unauthorized)
+                {
+                    errorMessage = "Invalid username or password.";
+                }
+                else
+                {
+                    errorMessage = $"Login failed with status {result.Status}.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 }

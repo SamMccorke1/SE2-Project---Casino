@@ -1,10 +1,20 @@
 @page "/"
 @using System.Timers
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
+@using Microsoft.AspNetCore.Components.Authorization
 @rendermode InteractiveServer
+@inject IJSRuntime JS
 
 
 <PageTitle>Chuds to Chads Casino - Transform Your Fortune</PageTitle>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div style="position: fixed; top: 20px; right: 20px; background: #ef4444; color: white; padding: 20px; border-radius: 8px; z-index: 9999; max-width: 400px;">
+        <strong>Error:</strong> @errorMessage
+        <button @onclick="() => errorMessage = null" style="margin-left: 10px; background: white; color: #ef4444; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">✕</button>
+    </div>
+}
 
 <div class="casino-container">
     <div class="floating-elements">
@@ -19,8 +29,17 @@
                 <img src="/images/C2C-Logo-Transparent.png" alt="C2C Casino" class="logo-image" />
         </NavLink>
         <div class="nav-buttons">
-            <button class="btn btn-secondary" @onclick="HandleLogin">Login</button>
-            <button class="btn btn-primary" @onclick="HandleSignUp">Sign Up</button>
+            <AuthorizeView>
+                <Authorized>
+                    <span class="username-display">Welcome, @context.User.Identity?.Name!</span>
+                    <button class="btn btn-profile" @onclick="HandleProfile">Profile</button>
+                    <button class="btn btn-secondary" @onclick="HandleLogout">Logout</button>
+                </Authorized>
+                <NotAuthorized>
+                    <button class="btn btn-secondary" @onclick="HandleLogin">Login</button>
+                    <button class="btn btn-primary" @onclick="HandleSignUp">Sign Up</button>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
     </header>
 
@@ -225,14 +244,30 @@
     [Inject] private NavigationManager Navigation {get; set;} = default!;
     private int currentChipIndex = 0;
     private Timer? chipRotationTimer;
+    private string? errorMessage;
+
+    private sealed class ApiResult
+    {
+        public bool Ok { get; set; }
+        public int Status { get; set; }
+        public string? Text { get; set; }
+    }
 
     protected override void OnInitialized()
     {
-        // Initialize chip rotation timer
-        chipRotationTimer = new Timer(3000); // 3 seconds
-        chipRotationTimer.Elapsed += RotateChips;
-        chipRotationTimer.AutoReset = true;
-        chipRotationTimer.Start();
+        try
+        {
+            // Initialize chip rotation timer
+            chipRotationTimer = new Timer(3000); // 3 seconds
+            chipRotationTimer.Elapsed += RotateChips;
+            chipRotationTimer.AutoReset = true;
+            chipRotationTimer.Start();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Initialization error: {ex.Message}";
+            Console.WriteLine($"Error in OnInitialized: {ex}");
+        }
     }
 
     private void RotateChips(object? sender, ElapsedEventArgs e)
@@ -242,16 +277,7 @@
     }
 
     // Event handlers for buttons
-    private void HandleLogin()
-    {
-         Navigation.NavigateTo("/login");
-    }
-
-    private void HandleSignUp() 
-    {
-        Navigation.NavigateTo("/register");
-    }
-    private void HandleStartPlaying()
+private void HandleStartPlaying()
     {
         // TODO: Navigate to game selection or create account
         Console.WriteLine("Start Playing clicked");
@@ -265,18 +291,84 @@
 
     private void HandleGameClick(string gameName)
     {
-       Navigation.NavigateTo($"{gameName}lobby");
+       Navigation.NavigateTo($"/{gameName}-lobby");
     }
 
 
     private void HandlePokerClick()
     {
-        HandleGameClick("texas");
+        HandleGameClick("poker");
     }
 
     private void HandleBlackjackClick()
     {
         HandleGameClick("blackjack");
+    }
+
+    private void HandleLogin()
+    {
+        try
+        {
+            Console.WriteLine("HandleLogin called - navigating to /login");
+            Navigation.NavigateTo("/login");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Login navigation error: {ex.Message}";
+            Console.WriteLine($"Error in HandleLogin: {ex}");
+        }
+    }
+
+    private void HandleSignUp()
+    {
+        try
+        {
+            Console.WriteLine("HandleSignUp called - navigating to /register");
+            Navigation.NavigateTo("/register");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Sign up navigation error: {ex.Message}";
+            Console.WriteLine($"Error in HandleSignUp: {ex}");
+        }
+    }
+
+    private void HandleProfile()
+    {
+        try
+        {
+            Console.WriteLine("HandleProfile called - navigating to /profile");
+            Navigation.NavigateTo("/profile");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Profile navigation error: {ex.Message}";
+            Console.WriteLine($"Error in HandleProfile: {ex}");
+        }
+    }
+
+    private async Task HandleLogout()
+    {
+        try
+        {
+            Console.WriteLine("HandleLogout called");
+            var result = await JS.InvokeAsync<ApiResult>("auth.logout");
+            if (result.Ok)
+            {
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                errorMessage = !string.IsNullOrEmpty(result.Text)
+                    ? $"Logout failed: {result.Text}"
+                    : $"Logout failed with status {result.Status}.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Logout error: {ex.Message}";
+            Console.WriteLine($"Error in HandleLogout: {ex}");
+        }
     }
 
     private void HandleCreateAccount()

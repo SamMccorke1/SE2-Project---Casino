@@ -1,6 +1,7 @@
 @page "/register"
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject HttpClient Http
 
 <PageTitle>Sign Up - Chuds to Chads Casino</PageTitle>
 
@@ -282,23 +283,51 @@
         isLoading = true;
         StateHasChanged();
 
-        // TODO: Replace with your actual registration logic
-        await Task.Delay(1000); // Simulated network request
-
-        // TODO: Save user to your database/service
-        // Example:
-        // var result = await AuthService.RegisterAsync(username, password);
-        // if (result.Success)
-        // {
-        //     successMessage = "Account created! Redirecting...";
-        //     await Task.Delay(1500);
-        //     NavigationManager.NavigateTo("/lobby");
-        // }
-        // else
-        //     errorMessage = result.ErrorMessage;
-
-        // Placeholder success message until auth is implemented
-        successMessage = $"Account '{username}' created successfully! You can now log in.";
-        isLoading = false;
+        try
+        {
+            // Call the API endpoint with absolute URL
+            var registerRequest = new { username, password };
+            var url = $"{Navigation.BaseUri.TrimEnd('/')}/api/auth/register";
+            var response = await Http.PostAsJsonAsync(url, registerRequest);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                successMessage = "Account created successfully! Redirecting to login...";
+                await Task.Delay(1500);
+                Navigation.NavigateTo("/login");
+            }
+            else
+            {
+                // Try to get error details from response
+                try
+                {
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(responseText))
+                    {
+                        errorMessage = $"Registration failed: {responseText}";
+                    }
+                    else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                    {
+                        errorMessage = "Username already taken or password doesn't meet requirements.";
+                    }
+                    else
+                    {
+                        errorMessage = $"Registration failed with status {response.StatusCode}.";
+                    }
+                }
+                catch
+                {
+                    errorMessage = "Registration failed. Please try again.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 }
