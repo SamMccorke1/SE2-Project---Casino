@@ -1,0 +1,68 @@
+@page "/blackjack-game/{BlackjackLobbyId}"
+@inject NavigationManager Navigation
+
+<button @onclick="ReturnHome" style="position:absolute; top:10px; left:10px;">Home</button>
+
+<h3>Blackjack - Lobby: @BlackjackLobbyId</h3>
+
+<div class="table">
+    <div class="dealer-area">
+        @if(GameInstance != null)
+        {
+            @foreach(var card in GameInstance.Dealer.Hand)
+            {
+                <img src="@card.ImagePath" class="card deal" />
+            }
+        }
+    </div>
+
+    <div class="player-area">
+        @if(GameInstance != null && GameInstance.CurrentPlayer != null)
+        {
+            @foreach(var card in GameInstance.CurrentPlayer.Hand)
+            {
+                <img src="@card.ImagePath" class="card deal" />
+            }
+        }
+    </div>
+
+    <div class="game-buttons">
+        @if(GameInstance != null && GameInstance.Phase == GamePhase.PlayerTurn)
+        {
+            <button class="hit-btn" @onclick="Hit">Hit</button>
+            <button class="stand-btn" @onclick="Stand">Stand</button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string? BlackjackLobbyId { get; set; }
+
+    private Chuds2Chads.Games.Blackjack.BlackjackGame? GameInstance;
+
+    protected override void OnInitialized()
+    {
+        GameInstance = new Chuds2Chads.Games.Blackjack.BlackjackGame(new List<string> { "Player1" }); // only current user for now
+    }
+
+    private void Hit()
+    {
+        GameInstance?.PlayerHit();
+    }
+
+    private void Stand()
+    {
+        GameInstance?.PlayerStand();
+    }
+
+    private void ReturnHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
+
+    private void ReturnHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

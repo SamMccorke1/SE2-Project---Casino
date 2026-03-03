@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+    .user-details[b-b4nlm1jifp] {
+        display: none;
+    }
+    
+    .user-logged-in[b-b4nlm1jifp] {
+        gap: 8px;
+        padding: 8px;
+    }
+}
