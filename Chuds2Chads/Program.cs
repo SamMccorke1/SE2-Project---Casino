@@ -1,5 +1,7 @@
 using Chuds2Chads.Components;
 using Chuds2Chads.Data;
+using Chuds2Chads.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 //using Chuds2Chads.Services;
@@ -10,6 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// Controllers for API endpoints
+builder.Services.AddControllers();
+
+// HttpClient for API calls
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddHttpClient("api");
 
 // Needed for Identity endpoints (Razor Pages)
 builder.Services.AddRazorPages();
@@ -34,8 +42,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+// Game services
+builder.Services.AddScoped<WalletService>();
+builder.Services.AddScoped<RouletteService>();
+builder.Services.AddScoped<SlotsService>();
+builder.Services.AddScoped<HorseRaceService>();
+
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<Chuds2Chads.Games.Blackjack.BlackjackLobbyService>();
 var app = builder.Build();
 
@@ -56,6 +71,7 @@ app.UseAntiforgery();
 // Static assets + Blazor endpoints
 app.MapStaticAssets();
 app.MapRazorPages();
+app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
