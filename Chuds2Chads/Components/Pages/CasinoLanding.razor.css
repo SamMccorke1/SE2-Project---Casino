@@ -583,6 +583,23 @@
     letter-spacing: 1px;
 }
 
+/* Game card image backgrounds */
+
+/* Roulette – deep green + gold */
+.game-image-roulette {
+    background: linear-gradient(135deg, #0d5c2e, #1a7a3a);
+}
+
+/* Slots – red and purple */
+.game-image-slots {
+    background: linear-gradient(135deg, #6a0dad, #ff2e63);
+}
+
+/* Horse Race – sky and turf */
+.game-image-horse {
+    background: linear-gradient(135deg, #1a6a3a, #0a3a6a);
+}
+
 /* CTA Section */
 .final-cta {
     padding: 8rem 5%;

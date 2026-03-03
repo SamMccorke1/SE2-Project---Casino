@@ -1,0 +1,217 @@
+@page "/games/slots"
+@rendermode InteractiveServer
+@* TODO: Add using Microsoft.AspNetCore.Authorization once login has been implemented for user authorization *@
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Chuds2Chads.Services
+@* TODO: Add @attribute [Authorize] once login has been implemented for user authorization *@
+@inject SlotsService SlotsService
+@inject WalletService WalletService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Slots - C2C Casino</PageTitle>
+
+<div class="slots-page">
+
+    <!-- Header -->
+    <div class="game-header">
+        <h1 class="game-title">🎰 Slot Machine</h1>
+        <div class="balance-display">
+            <span class="balance-label">Balance</span>
+            <span class="balance-amount">@balance <span class="coin-icon">🪙</span></span>
+        </div>
+    </div>
+
+    <!-- Result banner -->
+    @if (!string.IsNullOrEmpty(resultMessage))
+    {
+        <div class="result-banner @(lastMultiplier > 0 ? "result-win" : "result-loss")">
+            @if (isJackpot)
+            {
+                <span class="jackpot-text">🌟 JACKPOT! 🌟</span>
+            }
+            <span>@resultMessage</span>
+            @if (lastMultiplier > 0)
+            {
+                <span class="payout-info">Won @lastPayout 🪙</span>
+            }
+        </div>
+    }
+
+    <!-- Machine cabinet -->
+    <div class="machine-cabinet">
+
+        <!-- Three reels -->
+        <div class="reels-display">
+            @for (int i = 0; i < 3; i++)
+            {
+                int reelIndex = i;
+                <div class="reel @(isSpinning ? "reel-spinning" : "")">
+                    <div class="reel-symbol">
+                        @if (reels != null)
+                        {
+                            @SlotsService.GetEmoji(reels[reelIndex])
+                        }
+                        else
+                        {
+                            <span>❓</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Payline indicator bar -->
+        <div class="payline">
+            <div class="payline-line"></div>
+        </div>
+
+    </div>
+
+    <!-- Controls panel -->
+    <div class="controls-panel">
+
+        <!-- Bet chips -->
+        <div class="bet-row">
+            <label class="control-label">Bet Amount</label>
+            <div class="chip-selector">
+                @foreach (var chip in new[] { 5, 10, 25, 50, 100 })
+                {
+                    <button class="chip-btn @(betAmount == chip ? "chip-selected" : "")"
+                            @onclick="() => betAmount = chip"
+                            disabled="@isSpinning">
+                        @chip
+                    </button>
+                }
+                <input class="chip-custom" type="number" min="1"
+                       @bind="betAmount" disabled="@isSpinning" placeholder="Custom" />
+            </div>
+        </div>
+
+        <!-- Error -->
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-msg">⚠️ @errorMessage</div>
+        }
+
+        <!-- Spin button -->
+        <button class="spin-btn" @onclick="SpinAsync" disabled="@isSpinning">
+            @(isSpinning ? "Spinning…" : "🎰 SPIN")
+        </button>
+
+    </div>
+
+    <!-- Paytable -->
+    <div class="paytable">
+        <h3 class="paytable-title">Paytable</h3>
+        <div class="paytable-grid">
+
+            @* Three-of-a-kind rows, highest payout first *@
+            @foreach (var entry in SlotsService.PayTable.OrderByDescending(e => e.Value))
+            {
+                <div class="paytable-row">
+                    <span class="paytable-symbols">
+                        @SlotsService.GetEmoji(entry.Key)
+                        @SlotsService.GetEmoji(entry.Key)
+                        @SlotsService.GetEmoji(entry.Key)
+                    </span>
+                    <span class="paytable-payout">@entry.Value ×</span>
+                </div>
+            }
+
+            @* Special two-cherry partial match row — uses paytable-special *@
+            <div class="paytable-row paytable-special">
+                <span class="paytable-symbols">🍒 🍒 ❓</span>
+                <span class="paytable-payout">@SlotsService.TwoCherryMultiplier ×</span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@code {
+    // State
+    private Guid          userId;
+    private long          balance;
+    private long          betAmount      = 10;
+    private bool          isSpinning     = false;
+    private SlotSymbol[]? reels          = null;
+    private int           lastMultiplier = 0;
+    private long          lastPayout     = 0;
+    private bool          isJackpot      = false;
+    private string        resultMessage  = "";
+    private string        errorMessage   = "";
+
+    // Lifecycle
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        var claim = state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (Guid.TryParse(claim, out var id))
+        {
+            userId  = id;
+            balance = await WalletService.GetBalanceAsync(userId);
+        }
+    }
+
+    // Spin 
+    private async Task SpinAsync()
+    {
+        errorMessage = "";
+
+        if (betAmount <= 0)
+        {
+            errorMessage = "Bet amount must be at least 1.";
+            return;
+        }
+
+        // Only deduct from wallet if a real user is logged in
+        if (userId != Guid.Empty)
+        {
+            string betRef = $"slots-bet-{DateTime.UtcNow:yyyyMMddHHmmss}";
+            bool placed = await WalletService.TryPlaceBetAsync(userId, betAmount, betRef);
+            if (!placed)
+            {
+                errorMessage = "Insufficient balance.";
+                return;
+            }
+            balance -= betAmount;
+        }
+
+        isSpinning     = true;
+        resultMessage  = "";
+        reels          = null;
+        StateHasChanged();
+
+        // Delay while reel-spinning animation plays
+        await Task.Delay(900);
+
+        // Get result from service
+        var result = SlotsService.Spin();
+
+        reels          = result.Reels;
+        lastMultiplier = result.PayoutMultiplier;
+        isJackpot      = result.IsJackpot;
+        resultMessage  = result.Message;
+        lastPayout     = 0;
+
+
+        if (result.PayoutMultiplier > 0)
+        {
+            long payout = betAmount + (betAmount * result.PayoutMultiplier);
+            lastPayout  = payout;
+
+            // Credit payout if user is logged in
+            if (userId != Guid.Empty)
+            {
+                string payRef = $"slots-payout-{DateTime.UtcNow:yyyyMMddHHmmss}";
+                await WalletService.CreditPayoutAsync(userId, payout, payRef);
+                balance += payout;
+            }
+        }
+
+        isSpinning = false;
+        StateHasChanged();
+    }
+}

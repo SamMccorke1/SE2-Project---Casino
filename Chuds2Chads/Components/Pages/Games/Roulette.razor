@@ -1,0 +1,279 @@
+@page "/games/roulette"
+@rendermode InteractiveServer
+@* TODO: Add using Microsoft.AspNetCore.Authorization once login has been implemented *@
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Chuds2Chads.Services
+@* TODO: Add @attribute [Authorize] once login has been implemented *@
+@inject RouletteService RouletteService
+@inject WalletService WalletService
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>Roulette - C2C Casino</PageTitle>
+
+<div class="roulette-page">
+
+    <!-- Header -->
+    <div class="game-header">
+        <h1 class="game-title">🎡 Roulette</h1>
+        <div class="balance-display">
+            <span class="balance-label">Balance</span>
+            <span class="balance-amount">@balance <span class="coin-icon">🪙</span></span>
+        </div>
+    </div>
+
+    <!-- Result banner (shown after every spin) -->
+    @if (lastResult.HasValue)
+    {
+        <div class="result-banner @(lastWon ? "result-win" : "result-loss")">
+            <span class="result-number @GetPocketClass(lastResult.Value)">@lastResult</span>
+            <span class="result-colour">@RouletteService.GetColour(lastResult.Value)</span>
+            @if (lastWon)
+            {
+                <span class="result-msg">✅ @resultMessage — Won @lastPayout 🪙</span>
+            }
+            else
+            {
+                <span class="result-msg">❌ @resultMessage — No win</span>
+            }
+        </div>
+    }
+
+    <!-- Wheel track -->
+    <div class="wheel-area">
+        <div class="wheel-track">
+            @foreach (var num in RouletteService.WheelSequence)
+            {
+                <div class="wheel-pocket @GetPocketClass(num) @(lastResult.HasValue && lastResult.Value == num ? "pocket-active" : "")">
+                    @num
+                </div>
+            }
+        </div>
+        <div class="wheel-ball-indicator">
+            @if (isSpinning)
+            {
+                <span class="spinning-text">Spinning…</span>
+            }
+            else if (lastResult.HasValue)
+            {
+                <span class="landed-text @GetPocketClass(lastResult.Value)">@lastResult</span>
+            }
+            else
+            {
+                <span class="idle-text">Place your bet</span>
+            }
+        </div>
+    </div>
+
+    <!-- Bet controls -->
+    <div class="bet-controls">
+
+        <!-- Bet amount -->
+        <div class="bet-amount-row">
+            <label class="control-label">Bet Amount</label>
+            <div class="chip-selector">
+                @foreach (var chip in new[] { 10, 25, 50, 100, 250 })
+                {
+                    <button class="chip-btn @(betAmount == chip ? "chip-selected" : "")"
+                            @onclick="() => betAmount = chip"
+                            disabled="@isSpinning">
+                        @chip
+                    </button>
+                }
+                <input class="chip-custom" type="number" min="1"
+                       @bind="betAmount" disabled="@isSpinning" placeholder="Custom" />
+            </div>
+        </div>
+
+        <!-- Bet type -->
+        <div class="bet-type-row">
+            <label class="control-label">Bet Type</label>
+            <div class="bet-type-grid">
+
+                <button class="bet-type-btn colour-red @(selectedBet == BetType.Red ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Red)' disabled="@isSpinning">Red</button>
+
+                <button class="bet-type-btn colour-black @(selectedBet == BetType.Black ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Black)' disabled="@isSpinning">Black</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.Odd ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Odd)' disabled="@isSpinning">Odd</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.Even ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Even)' disabled="@isSpinning">Even</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.Low ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Low)' disabled="@isSpinning">Low 1–18</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.High ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.High)' disabled="@isSpinning">High 19–36</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.Dozen1 ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Dozen1)' disabled="@isSpinning">1st 12</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.Dozen2 ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Dozen2)' disabled="@isSpinning">2nd 12</button>
+
+                <button class="bet-type-btn @(selectedBet == BetType.Dozen3 ? "bet-selected" : "")"
+                        @onclick='() => SelectBet(BetType.Dozen3)' disabled="@isSpinning">3rd 12</button>
+
+                <!-- Straight number — button + number input in a wrapper -->
+                <div class="straight-bet-wrap">
+                    <button class="bet-type-btn @(selectedBet == BetType.Straight ? "bet-selected" : "")"
+                            @onclick='() => SelectBet(BetType.Straight)' disabled="@isSpinning">
+                        Straight (35:1)
+                    </button>
+                    <input class="straight-input" type="number" min="0" max="36"
+                           @bind="straightNumber" disabled="@isSpinning" placeholder="0–36" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Error message -->
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="error-msg">⚠️ @errorMessage</div>
+        }
+
+        <!-- Spin button -->
+        <button class="spin-btn" @onclick="SpinAsync"
+                disabled="@(isSpinning || selectedBet == null)">
+            @(isSpinning ? "Spinning…" : "Spin!")
+        </button>
+
+    </div>
+
+    <!-- Payout reference -->
+    <div class="payout-table">
+        <h3 class="payout-title">Payouts</h3>
+        <div class="payout-grid">
+            <div class="payout-row">
+                <span>Straight number</span><span>35:1</span>
+            </div>
+            <div class="payout-row">
+                <span>Dozen (1st / 2nd / 3rd 12)</span><span>2:1</span>
+            </div>
+            <div class="payout-row">
+                <span>Red / Black, Odd / Even, High / Low</span><span>1:1</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+    // State
+    private Guid     userId;
+    private long     balance;
+    private long     betAmount      = 10;
+    private BetType? selectedBet    = null;
+    private int?     straightNumber = null;
+    private bool     isSpinning     = false;
+    private int?     lastResult     = null;
+    private bool     lastWon        = false;
+    private long     lastPayout     = 0;
+    private string   resultMessage  = "";
+    private string   errorMessage   = "";
+
+    // Lifecycle
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        var claim = state.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (Guid.TryParse(claim, out var id))
+        {
+            userId  = id;
+            balance = await WalletService.GetBalanceAsync(userId);
+        }
+    }
+
+    // Bet selection
+    private void SelectBet(BetType type)
+    {
+        selectedBet  = type;
+        errorMessage = "";
+    }
+
+    // Spin
+    private async Task SpinAsync()
+    {
+        errorMessage = "";
+
+        if (selectedBet == null)
+        {
+            errorMessage = "Please select a bet type.";
+            return;
+        }
+        if (betAmount <= 0)
+        {
+            errorMessage = "Bet amount must be at least 1.";
+            return;
+        }
+        if (selectedBet == BetType.Straight &&
+            (straightNumber == null || straightNumber < 0 || straightNumber > 36))
+        {
+            errorMessage = "Enter a number 0-36 for a straight bet.";
+            return;
+        }
+
+        // Only attempt wallet deduction if a real user is logged in
+        if (userId != Guid.Empty)
+        {
+            string betRef = $"roulette-bet-{DateTime.UtcNow:yyyyMMddHHmmss}";
+            bool placed = await WalletService.TryPlaceBetAsync(userId, betAmount, betRef);
+            if (!placed)
+            {
+                errorMessage = "Insufficient balance.";
+                return;
+            }
+            balance -= betAmount;
+        }
+
+
+        isSpinning = true;
+        lastResult = null;
+        StateHasChanged();
+
+        // Brief delay so the "Spinning…" state is visible
+        await Task.Delay(1200);
+
+        // Spin and resolve
+        int landed = RouletteService.Spin();
+        var (won, multiplier, description) =
+            RouletteService.ResolveBet(selectedBet.Value, straightNumber, landed);
+
+        lastResult    = landed;
+        lastWon       = won;
+        resultMessage = description;
+        lastPayout    = 0;
+
+        // Credit payout if user is logged in
+        if (won && userId != Guid.Empty)
+        {
+            long payout = betAmount + (betAmount * multiplier);
+            lastPayout  = payout;
+            string payRef = $"roulette-payout-{DateTime.UtcNow:yyyyMMddHHmmss}";
+            await WalletService.CreditPayoutAsync(userId, payout, payRef);
+            balance += payout;
+        }
+        else if (won)
+        {
+            // Guest mode - show result without touching wallet
+            lastPayout = betAmount + (betAmount * multiplier);
+        }
+
+        isSpinning = false;
+        StateHasChanged();
+    }
+
+    // Helpers
+    /// <summary>
+    /// Returns the CSS colour class that matches the .pocket-red / .pocket-black / .pocket-green rules in Roulette.razor.css.
+    /// </summary>
+    private static string GetPocketClass(int number)
+    {
+        if (number == 0) return "pocket-green";
+        return RouletteService.RedNumbers.Contains(number) ? "pocket-red" : "pocket-black";
+    }
+}

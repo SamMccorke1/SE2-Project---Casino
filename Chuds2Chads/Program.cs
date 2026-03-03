@@ -1,5 +1,6 @@
 using Chuds2Chads.Components;
 using Chuds2Chads.Data;
+using Chuds2Chads.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
+
+// Game services
+builder.Services.AddScoped<WalletService>();
+builder.Services.AddScoped<RouletteService>();
+builder.Services.AddScoped<SlotsService>();
+builder.Services.AddScoped<HorseRaceService>();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
