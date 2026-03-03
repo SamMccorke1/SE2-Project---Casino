@@ -3,7 +3,6 @@
 @using System.Timers
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using Microsoft.AspNetCore.Components.Authorization
-@rendermode InteractiveServer
 @inject IJSRuntime JS
 
 
@@ -278,7 +277,7 @@
         <div class="final-cta-content">
             <h2>Ready to Make the Transformation?</h2>
             <p>Join thousands of players leveling up their game. Start with free chips and play your way to the top.</p>
-            <button class="btn btn-primary btn-hero" @onclick="HandleCreateAccount">Create Your Account</button>
+            <button class="btn btn-primary btn-hero" @onclick="HandleSignUp">Create Your Account</button>
         </div>
     </section>
 
@@ -332,31 +331,18 @@
         InvokeAsync(StateHasChanged);
     }
 
-    // Event handlers for buttons
-    private void HandleLogin()
-    {
-        // TODO: Navigate to login page or show login modal - Nav.NavigateTo("/login") once login page exists
-        Console.WriteLine("Login clicked");
-    }
-
-    private void HandleSignUp()
-    {
-        // TODO: Navigate to sign up page or show registration modal - Nav.NavigateTo("/register") once registration page exists
-        Console.WriteLine("Sign Up clicked");
-    }
-
     /// <summary>
     /// Routes a game card click to the correct game page.
     /// Pass the route segment: "/games/roulette", "/games/slots", "/games/horserace", "/games/blackjack", "/games/poker".
     /// </summary>
     private void HandleGameClick(string route) =>
-        Nav.NavigateTo($"/games/{route}");
+        Navigation.NavigateTo($"/games/{route}");
 
     /// <summary>
     /// Navigates to the slots game page as a fun "start playing free" option since slots is the most instantly playable game and doesn't require learning rules or strategy. 
     /// </summary>
     private void HandleStartPlaying() =>
-        Nav.NavigateTo("/games/slots");
+        Navigation.NavigateTo("/games/slots");
 
     private void HandleViewGames()
     {
@@ -365,7 +351,7 @@
     }
 
     private void HandlePokerClick()
-    {
+    { 
         HandleGameClick("poker");
     }
 
