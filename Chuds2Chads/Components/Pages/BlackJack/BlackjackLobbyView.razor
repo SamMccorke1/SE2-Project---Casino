@@ -1,0 +1,62 @@
+@page "/blackjack-lobby"
+@inject NavigationManager Navigation
+@inject Chuds2Chads.Games.Blackjack.LobbyService LobbyService
+@using Chuds2Chads.Games.Blackjack
+
+<h3>Blackjack Lobby</h3>
+<button @onclick="ReturnHome" style="position:absolute; top:10px; left:10px;">Home</button>
+
+<div>
+    <h4>Available Lobbies</h4>
+    @foreach(var lobby in Lobbies)
+    {
+        <div style="margin-bottom:10px;">
+            <span>@lobby.LobbyName (@lobby.Players.Count/@lobby.MaxPlayers)</span>
+            @if(!lobby.IsFull)
+            {
+                <button @onclick="() => JoinLobby(lobby.LobbyName)">Join</button>
+            }
+            else
+            {
+                <span>Full</span>
+            }
+        </div>
+    }
+
+    <h4>Create New Lobby</h4>
+    <input @bind="NewLobbyName" placeholder="Lobby name"/>
+    <button @onclick="CreateLobby">Create</button>
+</div>
+
+@code {
+    private List<BlackjackLobby> Lobbies = new();
+    private string NewLobbyName = "";
+    private string CurrentUser = "Player1"; // replace with actual user system later
+
+    protected override void OnInitialized()
+    {
+        Lobbies = LobbyService.GetAvailableLobbies();
+    }
+
+    private void ReturnHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void CreateLobby()
+    {
+        if (!string.IsNullOrWhiteSpace(NewLobbyName))
+        {
+            LobbyService.CreateLobby(NewLobbyName, CurrentUser);
+            JoinLobby(NewLobbyName);
+        }
+    }
+
+    private void JoinLobby(string lobbyName)
+    {
+        if(LobbyService.JoinLobby(lobbyName, CurrentUser))
+        {
+            Navigation.NavigateTo($"/blackjack-game/{lobbyName}");
+        }
+    }
+}
