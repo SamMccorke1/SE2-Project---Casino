@@ -1,0 +1,111 @@
+@page "/blackjack-lobby"
+@rendermode InteractiveServer
+@using Chuds2Chads.Games.Blackjack
+@inject NavigationManager Navigation
+@inject BlackjackLobbyService LobbyService
+
+<div class="casino-lobby-wrapper">
+    <button class="btn-back" @onclick="ReturnHome">
+        &#8592; Back to Menu
+    </button>
+
+    <div class="lobby-split-layout">
+        
+        <div class="create-section panel">
+            <h2 class="gold-text">Host a New Table</h2>
+            <p class="subtitle">Start your own high-roller table and wait for challengers.</p>
+            
+            <div class="input-group">
+                <input @bind="NewLobbyName" placeholder="Enter Table Name..." class="casino-input" />
+                <button class="btn-glow" @onclick="CreateLobby">Create Game</button>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <p class="error-text">@ErrorMessage</p>
+            }
+        </div>
+
+        <div class="list-section panel">
+            <div class="list-header">
+                <h2 class="gold-text">Open Lobbies</h2>
+                <input @bind="SearchTerm" @bind:event="oninput" placeholder="Search tables..." class="casino-input search-box" />
+            </div>
+
+            <div class="table-list">
+                @if (!FilteredLobbies.Any())
+                {
+                    <p class="empty-state">No open tables available. Be a Chad and host one!</p>
+                }
+                else
+                {
+                    @foreach(var lobby in FilteredLobbies)
+                    {
+                        <div class="lobby-card">
+                            <div class="lobby-info">
+                                <span class="lobby-name">♠ @lobby.LobbyName ♠</span>
+                                <span class="player-count">Players: @lobby.Players.Count / @lobby.MaxPlayers</span>
+                            </div>
+                            <button class="btn-join" @onclick="() => JoinLobby(lobby.LobbyName)">Take a Seat</button>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<BlackjackTableInfo> Lobbies = new();
+    private string NewLobbyName = "";
+    private string SearchTerm = "";
+    private string CurrentUser = "Player1"; // TODO: Hook up to auth system
+    private string ErrorMessage = "";
+
+    private IEnumerable<BlackjackTableInfo> FilteredLobbies => 
+        Lobbies.Where(l => l.Players.Count > 0 && !l.IsFull && 
+                           (string.IsNullOrWhiteSpace(SearchTerm) || l.LobbyName.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)));
+
+    protected override void OnInitialized()
+    {
+        RefreshLobbies();
+    }
+
+    private void RefreshLobbies()
+    {
+        Lobbies = LobbyService.GetAvailableLobbies();
+    }
+
+    private void ReturnHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void CreateLobby()
+    {
+        ErrorMessage = "";
+        if (string.IsNullOrWhiteSpace(NewLobbyName)) return;
+
+        if (Lobbies.Any(l => l.LobbyName.Equals(NewLobbyName, StringComparison.OrdinalIgnoreCase)))
+        {
+            ErrorMessage = "A table with this name already exists.";
+            return;
+        }
+
+        LobbyService.CreateLobby(NewLobbyName, CurrentUser);
+        JoinLobby(NewLobbyName);
+    }
+
+    private void JoinLobby(string lobbyName)
+    {
+        if(LobbyService.JoinLobby(lobbyName, CurrentUser))
+        {
+            Navigation.NavigateTo($"/blackjack-game/{lobbyName}");
+        }
+        else
+        {
+            ErrorMessage = "Could not join table. It might be full.";
+            RefreshLobbies(); 
+        }
+    }
+}

@@ -1,0 +1,148 @@
+@page "/blackjack-game/{LobbyName}"
+@rendermode InteractiveServer
+@using Chuds2Chads.Games.Blackjack
+@inject NavigationManager Navigation
+@inject BlackjackLobbyService LobbyService
+@implements IDisposable
+
+<div class="casino-table">
+    <button class="btn-leave" @onclick="ReturnToLobby">&#8592; Leave Table</button>
+
+    @if (Game == null)
+    {
+        <h2 style="text-align:center; margin-top:20vh;">Loading Table...</h2>
+    }
+    else
+    {
+        <div class="deck-area @(Game.Phase == GamePhase.Dealing || !Game.Players.Any(p => p.Hand.Any()) ? "anim-shuffle" : "")">
+            <img src="@Card.CardBackPath" class="deck-image" />
+        </div>
+
+        @if (Game.Phase == GamePhase.GameOver)
+        {
+            <div class="leaderboard-overlay">
+                <h2 style="color: #ffd700;">Game Over!</h2>
+                <h4>Dealer's Score: @Game.Dealer.Score @(Game.Dealer.IsBusted ? "(BUSTED)" : "")</h4>
+                <table class="table" style="color: white; margin-top: 20px;">
+                    <thead>
+                        <tr>
+                            <th style="padding: 10px;">Player</th>
+                            <th style="padding: 10px;">Score</th>
+                            <th style="padding: 10px;">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var player in Game.Players)
+                        {
+                            <tr>
+                                <td>@player.Name</td>
+                                <td>@player.Score @(player.IsBusted ? "(BUST)" : "")</td>
+                                <td style="font-weight: bold;">
+                                    @if(player.HasWon) { <span style="color:#4CAF50">CHAD (Won)</span> }
+                                    else if(player.IsPush) { <span style="color:#aaa">PUSH (Tie)</span> }
+                                    else { <span style="color:#f44336">CHUD (Lost)</span> }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <button class="btn-action btn-hit" style="margin-top: 20px;" @onclick="StartNewRound">Play Next Round</button>
+            </div>
+        }
+
+        <div class="dealer-zone">
+            <div class="cards-container">
+                @foreach(var cardData in Game.Dealer.Hand.Select((value, index) => new { value, index }))
+                {
+                    <div style="--card-index: @cardData.index;">
+                        @if (cardData.index == 1)
+                        {
+                            <div class="flip-container anim-deal">
+                                <div class="flipper @(Game.DealerRevealed ? "is-flipped" : "")">
+                                    <img src="@Card.CardBackPath" class="card-back" />
+                                    <img src="@cardData.value.ImagePath" class="card-front" />
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@cardData.value.ImagePath" class="playing-card anim-deal" style="margin-left: @(cardData.index == 0 ? "0" : "-60px");" />
+                        }
+                    </div>
+                }
+            </div>
+            <div class="player-nameplate">
+                DEALER <br/>
+                <span style="color:#ffd700">@(Game.DealerRevealed ? Game.Dealer.Score.ToString() : "?")</span>
+            </div>
+        </div>
+
+        <div class="players-zone">
+            @foreach(var player in Game.Players)
+            {
+                <div class="player-spot @(Game.CurrentPlayer?.Name == player.Name ? "active-turn" : "")">
+                    <div class="cards-container">
+                        @foreach(var cardData in player.Hand.Select((value, index) => new { value, index }))
+                        {
+                            <img src="@cardData.value.ImagePath" 
+                                 class="playing-card anim-deal card-zoom" 
+                                 style="--card-index: @(cardData.index + 2); margin-left: @(cardData.index == 0 ? "0" : "-60px");" />
+                        }
+                    </div>
+
+                    @if(Game.Phase == GamePhase.PlayerTurn && Game.CurrentPlayer?.Name == player.Name && player.Name == CurrentUser)
+                    {
+                        <div class="action-buttons">
+                            <button class="btn-action btn-hit" @onclick="Hit">HIT</button>
+                            <button class="btn-action btn-stand" @onclick="Stand">STAND</button>
+                        </div>
+                    }
+                    
+                    <div class="player-nameplate">
+                        @player.Name <br/> 
+                        <span style="color:#ffd700">Score: @player.Score</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string LobbyName { get; set; }
+    private PlayBlackjack Game;
+    private string CurrentUser = "Player1"; 
+
+    protected override void OnInitialized()
+    {
+        Game = LobbyService.GetGameInstance(LobbyName);
+        
+        if (Game == null)
+        {
+            Navigation.NavigateTo("/blackjack-lobby");
+            return;
+        }
+
+        Game.OnGameStateChanged += StateHasChanged;
+        
+        if (Game.Phase == GamePhase.WaitingForPlayers)
+        {
+            Game.StartNewRound();
+        }
+    }
+
+    private void Hit() => Game.PlayerHit(CurrentUser);
+    private void Stand() => Game.PlayerStand(CurrentUser);
+    private void StartNewRound() => Game.StartNewRound();
+    
+    private void ReturnToLobby()
+    {
+        LobbyService.LeaveLobby(LobbyName, CurrentUser);
+        Navigation.NavigateTo("/blackjack-lobby");
+    }
+
+    public void Dispose()
+    {
+        if (Game != null) Game.OnGameStateChanged -= StateHasChanged;
+    }
+}

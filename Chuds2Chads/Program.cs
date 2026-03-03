@@ -2,15 +2,14 @@ using Chuds2Chads.Components;
 using Chuds2Chads.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Chuds2Chads.Services;
-
+//using Chuds2Chads.Services;
+using Chuds2Chads.Games;
 var builder = WebApplication.CreateBuilder(args);
 
 // UI
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-// Lobby service
-   builder.Services.AddSingleton<LobbyService>();
+
 
 // Needed for Identity endpoints (Razor Pages)
 builder.Services.AddRazorPages();
@@ -37,7 +36,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
-
+builder.Services.AddSingleton<Chuds2Chads.Games.Blackjack.BlackjackLobbyService>();
 var app = builder.Build();
 
 // Pipeline
