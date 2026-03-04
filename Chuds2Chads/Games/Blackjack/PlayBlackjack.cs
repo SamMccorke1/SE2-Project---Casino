@@ -97,7 +97,6 @@ namespace Chuds2Chads.Games.Blackjack
         {
             Phase = GamePhase.DealerTurn;
             DealerRevealed = true;
-            NotifyStateChanged();
 
             while (Dealer.Score < 17)
             {
