@@ -4,6 +4,7 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @using Microsoft.AspNetCore.Components.Authorization
 @inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 
 <PageTitle>Chuds to Chads Casino - Transform Your Fortune</PageTitle>
@@ -131,14 +132,14 @@
         </div>
     </section>
 
-    <section class="games">
+    <section class="games" id="games-section">
         <div class="features-header">
             <h2 class="section-title">Choose Your Game</h2>
             <p class="section-subtitle">Master the classics or try something new</p>
         </div>
         
         <div class="games-grid">
-            <div class="game-card" @onclick='() => HandleGameClick("blackjack-lobby")'>
+            <div class="game-card" @onclick="HandleBlackjackClick">
                 <div class="game-image">
                     <span>🂡</span>
                 </div>
@@ -191,7 +192,7 @@
             </div>
             
             @* Roulette -- uses .game-image-roulette from CasinoLanding.razor.css *@
-            <div class="game-card" @onclick='() => HandleGameClick("roulette")'>
+            <div class="game-card" @onclick="HandleRouletteClick">
                 <div class="game-image game-image-roulette">
                     <span>🎡</span>
                 </div>
@@ -218,7 +219,7 @@
             </div>
 
             @* Slots -- uses .game-image-slots from CasinoLanding.razor.css *@
-            <div class="game-card" @onclick='() => HandleGameClick("slots")'>
+            <div class="game-card" @onclick= "HandleSlotsClick">
                 <div class="game-image game-image-slots">
                     <span>🎰</span>
                 </div>
@@ -245,7 +246,7 @@
             </div>
 
             @* Horse Race -- uses .game-image-horse from CasinoLanding.razor.css *@
-            <div class="game-card" @onclick='() => HandleGameClick("horserace")'>
+            <div class="game-card" @onclick="HandleHorseClick">
                 <div class="game-image game-image-horse">
                     <span>🏇</span>
                 </div>
@@ -295,8 +296,7 @@
 </div>
 
 @code {
-
-    [Inject] private NavigationManager Navigation {get; set;} = default!;
+    [Inject] private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
     private int currentChipIndex = 0;
     private Timer? chipRotationTimer;
     private string? errorMessage;
@@ -331,35 +331,47 @@
         InvokeAsync(StateHasChanged);
     }
 
-    /// <summary>
-    /// Routes a game card click to the correct game page.
-    /// Pass the route segment: "/games/roulette", "/games/slots", "/games/horserace", "/games/blackjack", "/games/poker".
-    /// </summary>
-    private void HandleGameClick(string route) =>
-        Navigation.NavigateTo($"/games/{route}");
-
-    /// <summary>
-    /// Navigates to the slots game page as a fun "start playing free" option since slots is the most instantly playable game and doesn't require learning rules or strategy. 
-    /// </summary>
-    private void HandleStartPlaying() =>
-        Navigation.NavigateTo("/games/slots");
-
-    private void HandleViewGames()
+    private void HandleHorseClick()
     {
-        // TODO: Scroll to games section or navigate to games page - JS interop scroll to #games once that is set up
-        Console.WriteLine("View Games clicked");
+        Navigation.NavigateTo("/HorseRacing/horserace");
+    }
+
+    private void HandleRouletteClick()
+    {
+        Navigation.NavigateTo("/roulette/roulette");
+    }
+    private void HandleSlotsClick()
+    {
+        Navigation.NavigateTo("/slots/slots");
     }
 
     private void HandlePokerClick()
     { 
-        HandleGameClick("poker");
+        Navigation.NavigateTo("/poker-lobby");
     }
 
     private void HandleBlackjackClick()
     {
-        HandleGameClick("blackjack");
+        Navigation.NavigateTo("/blackjack-lobby");
     }
 
+    private async Task HandleViewGames()
+    {
+        await JS.InvokeVoidAsync("eval", "document.getElementById('games-section').scrollIntoView({behavior:'smooth'})");
+    }
+
+    private async Task HandleStartPlaying()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            await JS.InvokeVoidAsync("eval", "document.getElementById('games-section').scrollIntoView({behavior:'smooth'})");
+        }
+        else
+        {
+            Navigation.NavigateTo("/register");
+        }
+    }
     private void HandleLogin()
     {
         try

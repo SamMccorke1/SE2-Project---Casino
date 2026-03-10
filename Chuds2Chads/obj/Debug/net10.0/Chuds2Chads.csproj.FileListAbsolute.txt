@@ -350,13 +350,8 @@ C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debu
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Layout\MainLayout.razor.rz.scp.css
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Layout\NavMenu.razor.rz.scp.css
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\BlackjackGame.razor.rz.scp.css
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\BlackjackLobby.razor.rz.scp.css
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\CasinoLanding.razor.rz.scp.css
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Dashboard.razor.rz.scp.css
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Games\HorseRace.razor.rz.scp.css
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Games\Roulette.razor.rz.scp.css
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Games\Slots.razor.rz.scp.css
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Login.razor.rz.scp.css
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Register.razor.rz.scp.css
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\UserInfoDisplay.razor.rz.scp.css
@@ -409,10 +404,6 @@ C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debu
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\rpydzsv8mn-{0}-h1s4sie4z3-h1s4sie4z3.gz
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\cd74osybx6-{0}-4d85u1mtcx-4d85u1mtcx.gz
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\4rxnogzcxo-{0}-0j3bgjxly4-0j3bgjxly4.gz
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-ax6tuj8tun-ax6tuj8tun.gz
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\633hdj8dxo-{0}-zr4b1gdhaw-zr4b1gdhaw.gz
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-wvsa6xom27-wvsa6xom27.gz
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-wvsa6xom27-wvsa6xom27.gz
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.development.json
@@ -424,3 +415,12 @@ C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debu
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.pdb
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.genruntimeconfig.cache
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\ref\Chuds2Chads.dll
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\BlackJack\BlackjackGame.razor.rz.scp.css
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\BlackJack\BlackjackLobby.razor.rz.scp.css
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Roulette\Roulette.razor.rz.scp.css
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Slots\Slots.razor.rz.scp.css
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\HorseRacing\HorseRace.razor.rz.scp.css
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-7jdqmz0nc9-7jdqmz0nc9.gz
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-7jdqmz0nc9-7jdqmz0nc9.gz
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-ax6tuj8tun-ax6tuj8tun.gz
+C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\633hdj8dxo-{0}-zr4b1gdhaw-zr4b1gdhaw.gz

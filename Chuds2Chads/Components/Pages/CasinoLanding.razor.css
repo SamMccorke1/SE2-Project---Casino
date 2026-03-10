@@ -32,6 +32,7 @@
     background-size: 100px 100px;
     opacity: 0.03;
     animation: gridScroll 20s linear infinite;
+    pointer-events: none;
 }
 
 @keyframes gridScroll {
@@ -529,6 +530,7 @@
     font-size: 6rem;
     opacity: 0.1;
     animation: rotate 20s linear infinite;
+    pointer-events: none;
 }
 
 @keyframes rotate {
@@ -631,6 +633,7 @@
             rgba(0, 255, 65, 0.1),
             transparent);
     animation: shine 3s infinite;
+    pointer-events: none;
 }
 
 @keyframes shine {
