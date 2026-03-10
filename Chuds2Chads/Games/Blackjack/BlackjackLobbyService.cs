@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Chuds2Chads.Games.Blackjack;
 
 namespace Chuds2Chads.Games.Blackjack
 {

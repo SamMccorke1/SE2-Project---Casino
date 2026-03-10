@@ -6,7 +6,13 @@ namespace Chuds2Chads.Games.Blackjack
 {
     public enum Suit { Hearts, Diamonds, Clubs, Spades }
     public enum Rank { Two = 2, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace }
-    public enum GamePhase { WaitingForPlayers, Dealing, PlayerTurn, DealerTurn, GameOver }
+    public enum GamePhase { 
+        WaitingForPlayers, 
+        Dealing, 
+        PlayerTurn, 
+        DealerTurn, 
+        GameOver, 
+        Finished }
 
     public class Card
     {

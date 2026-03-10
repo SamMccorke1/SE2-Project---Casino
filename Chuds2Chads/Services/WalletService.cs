@@ -5,8 +5,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Chuds2Chads.Services;
 
 /// <summary>
-/// Handles all wallet reads, bet deductions, and payout credits.
-/// Injected as a scoped service so each request gets its own DbContext lifetime.
+/// Handles wallet deductions (bets) and credits (payouts) with full transaction logging.
+/// Register as Scoped in Program.cs:
+///   builder.Services.AddScoped&lt;WalletService&gt;();
 /// </summary>
 public class WalletService
 {
@@ -17,40 +18,40 @@ public class WalletService
         _db = db;
     }
 
-    /// <summary>
-    /// Returns the current coin balance for the given user.
-    /// Returns 0 if no wallet exists yet.
-    /// Wallet is set to be created on first bet.
-    /// </summary>
-    public async Task<long> GetBalanceAsync(Guid userId)
+    // ──────────────────────────────────────────────
+    // Public API
+    // ──────────────────────────────────────────────
+
+    /// <summary>Returns the current balance for a user, or null if no wallet exists.</summary>
+    public async Task<long?> GetBalanceAsync(Guid userId)
     {
-        var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
-        return wallet?.Balance ?? 0;
+        var wallet = await _db.Wallets.AsNoTracking()
+            .FirstOrDefaultAsync(w => w.UserId == userId);
+        return wallet?.Balance;
     }
 
     /// <summary>
-    /// Attempts to deduct <paramref name="amount"/> coins as a bet.
-    /// Returns false if the balance is insufficient or wallet does not exist.
-    /// Creates a BetPlaced Transaction record on success.
+    /// Attempts to deduct <paramref name="amount"/> from the user's wallet as a bet.
+    /// Returns true on success, false if the balance is insufficient or the wallet is missing.
     /// </summary>
     public async Task<bool> TryPlaceBetAsync(Guid userId, long amount, string reference)
     {
         if (amount <= 0) return false;
 
         var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
-        if (wallet == null || wallet.Balance < amount) return false;
+        if (wallet is null || wallet.Balance < amount) return false;
 
-        wallet.Balance -= amount;
-        wallet.UpdatedUtc = DateTime.UtcNow;
+        wallet.Balance    -= amount;
+        wallet.UpdatedUtc  = DateTime.UtcNow;
 
         _db.Transactions.Add(new Transaction
         {
-            UserId = userId,
-            Type = TransactionType.BetPlaced,
-            Amount = -amount,
+            UserId       = userId,
+            Type         = TransactionType.BetPlaced,
+            Amount       = -amount,
             BalanceAfter = wallet.Balance,
-            Reference = reference,
-            CreatedUtc = DateTime.UtcNow
+            Reference    = reference,
+            CreatedUtc   = DateTime.UtcNow
         });
 
         await _db.SaveChangesAsync();
@@ -58,32 +59,60 @@ public class WalletService
     }
 
     /// <summary>
-    /// Credits <paramref name="amount"/> coins to the user as a payout.
-    /// Creates a Payout Transaction record.
+    /// Credits <paramref name="amount"/> to the user's wallet as a payout.
+    /// Creates the wallet automatically if it doesn't exist yet (shouldn't happen in prod).
     /// </summary>
     public async Task CreditPayoutAsync(Guid userId, long amount, string reference)
     {
         if (amount <= 0) return;
 
         var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
-        if (wallet == null)
+        if (wallet is null)
         {
-            // Auto-create wallet if somehow missing
             wallet = new Wallet { UserId = userId, Balance = 0 };
             _db.Wallets.Add(wallet);
         }
 
-        wallet.Balance += amount;
-        wallet.UpdatedUtc = DateTime.UtcNow;
+        wallet.Balance    += amount;
+        wallet.UpdatedUtc  = DateTime.UtcNow;
 
         _db.Transactions.Add(new Transaction
         {
-            UserId = userId,
-            Type = TransactionType.Payout,
-            Amount = amount,
+            UserId       = userId,
+            Type         = TransactionType.Payout,
+            Amount       = amount,
             BalanceAfter = wallet.Balance,
-            Reference = reference,
-            CreatedUtc = DateTime.UtcNow
+            Reference    = reference,
+            CreatedUtc   = DateTime.UtcNow
+        });
+
+        await _db.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Ensures a wallet row exists for the user (called after registration / first login).
+    /// Safe to call multiple times — is a no-op if the wallet already exists.
+    /// </summary>
+    public async Task EnsureWalletAsync(Guid userId, long startingBalance = 1_000)
+    {
+        var exists = await _db.Wallets.AnyAsync(w => w.UserId == userId);
+        if (exists) return;
+
+        _db.Wallets.Add(new Wallet
+        {
+            UserId     = userId,
+            Balance    = startingBalance,
+            UpdatedUtc = DateTime.UtcNow
+        });
+
+        _db.Transactions.Add(new Transaction
+        {
+            UserId       = userId,
+            Type         = TransactionType.Deposit,
+            Amount       = startingBalance,
+            BalanceAfter = startingBalance,
+            Reference    = "welcome-bonus",
+            CreatedUtc   = DateTime.UtcNow
         });
 
         await _db.SaveChangesAsync();

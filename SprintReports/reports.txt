@@ -1,0 +1,2 @@
+Place sprint reports here. Make sure the files are labeled as 'SprintReport1' or some equivalent.
+Put your name in the sprint report file itself.
