@@ -8,11 +8,11 @@ namespace Chuds2Chads.Games.Blackjack
     {
         public string LobbyName { get; set; }
         public GamePhase Phase { get; private set; } = GamePhase.WaitingForPlayers;
-        
+
         public Deck Deck { get; private set; } = new Deck();
         public Player Dealer { get; private set; } = new Player { Name = "Dealer", IsDealer = true };
         public List<Player> Players { get; set; } = new();
-        
+
         public int CurrentPlayerIndex { get; private set; } = 0;
         public Player? CurrentPlayer => Players.ElementAtOrDefault(CurrentPlayerIndex);
         public bool DealerRevealed { get; private set; } = false;
@@ -45,8 +45,8 @@ namespace Chuds2Chads.Games.Blackjack
 
             CurrentPlayerIndex = 0;
             Phase = GamePhase.PlayerTurn;
-            
-            CheckCurrentPlayerStatus(); 
+
+            CheckCurrentPlayerStatus();
             NotifyStateChanged();
         }
 
