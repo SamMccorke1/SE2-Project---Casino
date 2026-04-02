@@ -1,4 +1,5 @@
 using Chuds2Chads.Data;
+using Chuds2Chads.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,16 @@ namespace Chuds2Chads.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AvatarService _avatarService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            AvatarService avatarService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _avatarService = avatarService;
         }
 
         [HttpPost("register")]
@@ -44,6 +50,8 @@ namespace Chuds2Chads.Controllers
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return BadRequest(new { error = errors });
             }
+
+            await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
 
             return Ok(new { message = "Account created successfully!" });
         }

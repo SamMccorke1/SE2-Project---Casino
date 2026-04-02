@@ -16,6 +16,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<GameRoom> GameRooms => Set<GameRoom>();
     public DbSet<RoomPlayer> RoomPlayers => Set<RoomPlayer>();
     public DbSet<GameSession> GameSessions => Set<GameSession>();
+    public DbSet<CosmeticDefinition> CosmeticDefinitions => Set<CosmeticDefinition>();
+    public DbSet<UserCosmeticItem> UserCosmeticItems => Set<UserCosmeticItem>();
+    public DbSet<UserAvatarLoadout> UserAvatarLoadouts => Set<UserAvatarLoadout>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,5 +41,34 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
         modelBuilder.Entity<RoomPlayer>()
             .HasIndex(p => new { p.RoomId, p.UserId })
             .IsUnique();
+
+        modelBuilder.Entity<CosmeticDefinition>()
+            .HasIndex(c => c.AssetKey)
+            .IsUnique();
+
+        modelBuilder.Entity<UserCosmeticItem>()
+            .HasKey(i => i.ObjectId);
+
+        modelBuilder.Entity<UserCosmeticItem>()
+            .HasOne(i => i.User)
+            .WithMany(u => u.OwnedCosmeticItems)
+            .HasForeignKey(i => i.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserCosmeticItem>()
+            .HasOne(i => i.CosmeticDefinition)
+            .WithMany(c => c.OwnedItems)
+            .HasForeignKey(i => i.CosmeticDefinitionId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserAvatarLoadout>()
+            .HasIndex(a => a.UserId)
+            .IsUnique();
+
+        modelBuilder.Entity<UserAvatarLoadout>()
+            .HasOne(a => a.User)
+            .WithOne(u => u.AvatarLoadout)
+            .HasForeignKey<UserAvatarLoadout>(a => a.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

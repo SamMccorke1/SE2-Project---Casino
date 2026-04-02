@@ -1,6 +1,13 @@
 @page "/customize"
+@using System.Security.Claims
+@using Chuds2Chads.Data.Entities
+@using Chuds2Chads.Services
 @using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject AvatarService AvatarService
 @attribute [Authorize]
 
 <PageTitle>Customize Character - Chuds to Chads Casino</PageTitle>
@@ -11,23 +18,75 @@
         <h1>Character Customization</h1>
     </div>
 
-    <div class="customize-card">
-        <div class="coming-soon">
-            <p>🎨 Character customization features coming soon!</p>
-            <p>Customize your avatar, cosmetics, and personal settings to make your casino experience truly yours.</p>
+    @if (isLoading)
+    {
+        <div class="alert alert-info">Loading customization inventory...</div>
+    }
+    else if (!string.IsNullOrWhiteSpace(message))
+    {
+        <div class="alert alert-error">@message</div>
+    }
+    else
+    {
+        <div class="avatar-preview-card">
+            <h2>Current Loadout</h2>
+            <div class="preview-grid">
+                @foreach (var slot in OrderedSlots)
+                {
+                    <div class="preview-item">
+                        <span class="preview-label">@slot</span>
+                        <span class="preview-value">@GetEquippedLabel(slot)</span>
+                    </div>
+                }
+            </div>
         </div>
-    </div>
+
+        <div class="inventory-grid">
+            @foreach (var slot in OrderedSlots)
+            {
+                <section class="slot-panel">
+                    <div class="slot-header">
+                        <h3>@slot</h3>
+                        <span class="slot-count">@GetCount(slot) owned</span>
+                    </div>
+
+                    @if (inventoryBySlot.TryGetValue(slot, out var items) && items.Count > 0)
+                    {
+                        @foreach (var item in items)
+                        {
+                            <article class="cosmetic-item @(item.IsEquipped ? "equipped" : "")">
+                                <div class="cosmetic-top-row">
+                                    <strong>@item.Name</strong>
+                                    <span class="rarity">@item.Rarity</span>
+                                </div>
+                                <div class="meta">Asset: @item.AssetKey</div>
+                                <div class="meta">Object ID: @item.ObjectId</div>
+                                <div class="meta">Earned: @item.EarnedUtc.ToLocalTime().ToString("g")</div>
+                                <button class="equip-button" disabled="@item.IsEquipped" @onclick="() => EquipAsync(item.ObjectId)">
+                                    @(item.IsEquipped ? "Equipped" : "Equip")
+                                </button>
+                            </article>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-slot">No items in this slot yet.</div>
+                    }
+                </section>
+            }
+        </div>
+    }
 </div>
 
 <style>
 .customize-container {
-    max-width: 600px;
-    margin: 40px auto;
+    max-width: 1100px;
+    margin: 30px auto;
     padding: 20px;
 }
 
 .customize-header {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 .back-link {
@@ -42,30 +101,252 @@
     text-decoration: underline;
 }
 
-.customize-card {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 2px solid #4ade80;
+.avatar-preview-card {
+    background: linear-gradient(145deg, #131b2f 0%, #0f172a 100%);
+    border: 1px solid rgba(74, 222, 128, 0.4);
     border-radius: 12px;
-    padding: 40px;
-    text-align: center;
-}
-
-.coming-soon {
-    color: #9ca3af;
-}
-
-.coming-soon p {
-    margin: 15px 0;
-    line-height: 1.6;
-}
-
-.coming-soon p:first-child {
-    color: #4ade80;
-    font-size: 32px;
+    padding: 16px;
     margin-bottom: 20px;
 }
 
-.coming-soon p:last-child {
+.avatar-preview-card h2 {
+    margin: 0 0 12px;
+    color: #4ade80;
+    font-size: 20px;
+}
+
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.preview-item {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.preview-label {
+    color: #9ca3af;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.preview-value {
+    color: #e2e8f0;
     font-size: 14px;
+    font-weight: 600;
+}
+
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.slot-panel {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(74, 222, 128, 0.35);
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+}
+
+.slot-header h3 {
+    margin: 0;
+    color: #4ade80;
+}
+
+.slot-count {
+    color: #93c5fd;
+    font-size: 12px;
+}
+
+.cosmetic-item {
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(15, 23, 42, 0.65);
+}
+
+.cosmetic-item.equipped {
+    border-color: rgba(74, 222, 128, 0.9);
+    box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.45);
+}
+
+.cosmetic-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.rarity {
+    color: #fbbf24;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.meta {
+    color: #cbd5e1;
+    font-size: 12px;
+    margin-bottom: 3px;
+    word-break: break-word;
+}
+
+.equip-button {
+    margin-top: 8px;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
+    color: #04110b;
+}
+
+.equip-button:disabled {
+    background: rgba(74, 222, 128, 0.25);
+    color: #a7f3d0;
+    cursor: default;
+}
+
+.empty-slot {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.alert {
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+@@media (max-width: 900px) {
+    .inventory-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
+
+@code {
+    private static readonly AvatarSlot[] OrderedSlots =
+    [
+        AvatarSlot.Head,
+        AvatarSlot.Face,
+        AvatarSlot.Torso,
+        AvatarSlot.Legs,
+        AvatarSlot.Shoe,
+        AvatarSlot.Pet
+    ];
+
+    private bool isLoading = true;
+    private string message = string.Empty;
+    private Guid userId;
+    private Dictionary<AvatarSlot, List<OwnedCosmeticDto>> inventoryBySlot = new();
+    private Dictionary<AvatarSlot, Guid?> equippedBySlot = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        isLoading = true;
+        message = string.Empty;
+
+        try
+        {
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var userIdValue = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!Guid.TryParse(userIdValue, out userId))
+            {
+                message = "Unable to identify the signed-in user.";
+                return;
+            }
+
+            var data = await AvatarService.GetCustomizationDataAsync(userId);
+            if (data is null)
+            {
+                message = "Avatar data is unavailable.";
+                return;
+            }
+
+            equippedBySlot = data.EquippedObjectIds;
+            inventoryBySlot = data.OwnedCosmetics
+                .GroupBy(i => i.Slot)
+                .ToDictionary(g => g.Key, g => g.ToList());
+        }
+        catch (Exception ex)
+        {
+            message = $"Error loading customization: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private int GetCount(AvatarSlot slot)
+    {
+        return inventoryBySlot.TryGetValue(slot, out var items) ? items.Count : 0;
+    }
+
+    private string GetEquippedLabel(AvatarSlot slot)
+    {
+        if (!equippedBySlot.TryGetValue(slot, out var equippedObjectId) || equippedObjectId is null)
+        {
+            return "None";
+        }
+
+        if (!inventoryBySlot.TryGetValue(slot, out var items))
+        {
+            return "None";
+        }
+
+        var equippedItem = items.FirstOrDefault(i => i.ObjectId == equippedObjectId.Value);
+        return equippedItem?.Name ?? "None";
+    }
+
+    private async Task EquipAsync(Guid objectId)
+    {
+        var ok = await AvatarService.EquipAsync(userId, objectId);
+        if (!ok)
+        {
+            message = "Failed to equip item.";
+            return;
+        }
+
+        await LoadAsync();
+    }
+}

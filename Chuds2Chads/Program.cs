@@ -44,6 +44,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 
 // Game services
 builder.Services.AddScoped<WalletService>();
+builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<RouletteService>();
 builder.Services.AddScoped<SlotsService>();
 builder.Services.AddScoped<HorseRaceService>();
@@ -53,6 +54,16 @@ builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<Chuds2Chads.Games.Blackjack.BlackjackLobbyService>();
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var avatarService = scope.ServiceProvider.GetRequiredService<AvatarService>();
+
+    await dbContext.Database.MigrateAsync();
+    await SeedData.InitializeAsync(scope.ServiceProvider);
+    await avatarService.EnsureCatalogSeededAsync();
+}
 
 // Pipeline
 if (!app.Environment.IsDevelopment())
