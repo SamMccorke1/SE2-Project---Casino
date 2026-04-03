@@ -1,0 +1,179 @@
+@page "/poker-game/{LobbyName}"
+@rendermode InteractiveServer
+@using Chuds2Chads.Games.Poker
+@using Chuds2Chads.Games.Blackjack
+@inject NavigationManager Navigation
+@inject PokerLobbyService LobbyService
+@implements IDisposable
+
+<div class="poker-table-wrapper">
+    <button class="btn-leave" @onclick="ReturnToLobby">&#8592; Leave Table</button>
+
+    @if (Game == null)
+    {
+        <h2 style="text-align:center; margin-top:20vh; color:white;">Loading Poker Table...</h2>
+    }
+    else
+    {
+        <div class="poker-felt">
+            
+            <div class="community-center">
+                <div class="pot-display">
+                    POT: <span style="color: gold;">@Game.Pot Gold</span>
+                    @if(Game.CurrentHighestBet > 0)
+                    {
+                        <div style="font-size: 0.8rem; color: #aaa;">Current Bet: @Game.CurrentHighestBet</div>
+                    }
+                </div>
+                <div class="community-cards">
+                    @foreach (var card in Game.CommunityCards)
+                    {
+                        <img src="@card.ImagePath" class="playing-card anim-slide-in" />
+                    }
+                </div>
+            </div>
+
+            @foreach (var player in Game.Players)
+            {
+                <div class="player-seat @GetSeatClass(player) @(Game.CurrentPlayer?.Name == player.Name ? "active-turn" : "") @(player.HasFolded ? "folded-state" : "")">
+                    
+                    @if (Game.Players.IndexOf(player) == Game.DealerIndex)
+                    {
+                        <div class="dealer-button">D</div>
+                    }
+
+                    <div class="player-info">
+                        <strong>@player.Name</strong>
+                        <div style="color: gold;">Gold: @player.Gold</div>
+                        @if(player.CurrentBet > 0) { <div class="bet-chip">Bet: @player.CurrentBet</div> }
+                        @if(player.IsAllIn) { <div class="bet-chip" style="background: red; color: white;">ALL-IN</div> }
+                    </div>
+
+                    <div class="cards-container">
+                        @foreach (var card in player.Hand)
+                        {
+                            bool showCard = (player.Name == CurrentUser) || (Game.Phase == PokerPhase.GameOver && !player.HasFolded);
+                            <img src="@(showCard ? card.ImagePath : Card.CardBackPath)" class="playing-card anim-deal" />
+                        }
+                    </div>
+
+                    @if (Game.Phase != PokerPhase.Waiting && Game.Phase != PokerPhase.GameOver && Game.CurrentPlayer?.Name == player.Name && player.Name == CurrentUser)
+                    {
+                        <div class="betting-controls">
+                            <button class="btn-poker btn-fold" @onclick="Fold">Fold</button>
+                            
+                            @{
+                                // Calculate exactly what is owed to the pot
+                                int amountToCall = Game.CurrentHighestBet - player.CurrentBet;
+                                int actualCallAmount = Math.Min(player.Gold, amountToCall);
+                                
+                                // You can only check if you owe absolutely nothing
+                                bool canCheck = amountToCall <= 0;
+                            }
+                            
+                            <button class="btn-poker btn-check" @onclick="Check" disabled="@(!canCheck)">Check</button>
+                            
+                            <button class="btn-poker btn-call" @onclick="Call" disabled="@(canCheck)">
+                                Call @(actualCallAmount > 0 ? $"({actualCallAmount})" : "")
+                            </button>
+
+                            @if (player.Gold > actualCallAmount)
+                            {
+                                <div class="raise-group">
+                                    <input type="number" @bind="RaiseAmount" min="1" max="@player.Gold" class="raise-input" placeholder="Amt" />
+                                    <button class="btn-poker btn-raise" @onclick="Raise" disabled="@(RaiseAmount <= 0 || RaiseAmount > player.Gold)">Raise</button>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (Game.Phase == PokerPhase.GameOver)
+            {
+                <div class="winner-overlay anim-fade-in">
+                    <h1 style="color: gold; text-shadow: 0 0 20px gold;">@Game.WinnerName</h1>
+                    @if (Game.WinAmount > 0)
+                    {
+                        <h2>+@Game.WinAmount Gold</h2>
+                    }
+                </div>
+            }
+            else if (Game.Phase == PokerPhase.Waiting)
+            {
+                <div class="winner-overlay">
+                    <h2>Waiting for players...</h2>
+                    @if (Game.Players.Count >= 2)
+                    {
+                        <button class="btn-poker btn-raise" style="padding: 15px 30px; font-size: 1.2rem;" @onclick="() => Game.StartNewRound()">Start Game</button>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string LobbyName { get; set; } = default!;
+    private TexasHoldemGame Game = default!;
+    private string CurrentUser = "Player1"; 
+    private int RaiseAmount = 20;
+
+    protected override void OnInitialized()
+    {
+        Game = LobbyService.GetGameInstance(LobbyName);
+        if (Game == null)
+        {
+            Navigation.NavigateTo("/poker-lobby");
+            return;
+        }
+        Game.OnGameStateChanged += StateHasChanged;
+
+        if (Game.Phase == PokerPhase.Waiting && Game.Players.Count >= 2)
+        {
+            Game.StartNewRound();
+        }
+    }
+
+    private string GetSeatClass(PokerPlayer player)
+    {
+        var myIndex = Game.Players.FindIndex(p => p.Name == CurrentUser);
+        if (myIndex == -1) return "seat-bottom-left"; // Fallback if watching
+
+        var theirIndex = Game.Players.IndexOf(player);
+        var relativePosition = (theirIndex - myIndex + Game.Players.Count) % Game.Players.Count;
+
+        return relativePosition switch
+        {
+            0 => "seat-bottom-left",
+            1 => "seat-bottom-right",
+            2 => "seat-right",
+            3 => "seat-left",
+            _ => "seat-bottom-left"
+        };
+    }
+
+    private void Fold() => Game.ProcessPlayerAction(CurrentUser, PokerAction.Fold);
+    private void Check() => Game.ProcessPlayerAction(CurrentUser, PokerAction.Check);
+    private void Call() => Game.ProcessPlayerAction(CurrentUser, PokerAction.Call);
+    
+    private void Raise()
+    {
+        if (RaiseAmount > 0)
+        {
+            Game.ProcessPlayerAction(CurrentUser, PokerAction.Raise, RaiseAmount);
+            RaiseAmount = Game.BigBlindAmount; // reset
+        }
+    }
+
+    private void ReturnToLobby()
+    {
+        LobbyService.LeaveLobby(LobbyName, CurrentUser);
+        Navigation.NavigateTo("/poker-lobby");
+    }
+
+    public void Dispose()
+    {
+        if (Game != null) Game.OnGameStateChanged -= StateHasChanged;
+    }
+}

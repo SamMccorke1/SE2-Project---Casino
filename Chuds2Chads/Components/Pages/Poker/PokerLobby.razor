@@ -1,0 +1,101 @@
+@page "/poker-lobby"
+@rendermode InteractiveServer
+@using Chuds2Chads.Games.Poker
+@inject NavigationManager Navigation
+@inject PokerLobbyService LobbyService
+
+<div class="casino-lobby-wrapper poker-theme">
+    <button class="btn-back" @onclick="ReturnHome">&#8592; Back to Menu</button>
+
+    <div class="lobby-split-layout">
+        <div class="create-section panel">
+            <h2 class="gold-text">Host Texas Hold'em</h2>
+            <p class="subtitle">Start a high-stakes poker table. A ChadBot will join automatically until real players arrive.</p>
+            
+            <div class="input-group">
+                <input @bind="NewLobbyName" placeholder="Enter Table Name..." class="casino-input" />
+                <button class="btn-glow poker-btn" @onclick="CreateLobby">Host Poker Table</button>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <p class="error-text">@ErrorMessage</p>
+            }
+        </div>
+
+        <div class="list-section panel">
+            <div class="list-header">
+                <h2 class="gold-text">Open Poker Tables</h2>
+            </div>
+
+            <div class="table-list">
+                @if (!Lobbies.Any())
+                {
+                    <p class="empty-state">No active poker tables. Time to host one!</p>
+                }
+                else
+                {
+                    @foreach(var lobby in Lobbies)
+                    {
+                        <div class="lobby-card">
+                            <div class="lobby-info">
+                                <span class="lobby-name">♦ @lobby.LobbyName ♦</span>
+                                <span class="player-count">Players: @lobby.Players.Count / @lobby.MaxPlayers</span>
+                            </div>
+                            @if(!lobby.IsFull)
+                            {
+                                <button class="btn-join poker-join" @onclick="() => JoinLobby(lobby.LobbyName)">Join Table</button>
+                            }
+                            else
+                            {
+                                <span style="color:red">Table Full</span>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<PokerTableInfo> Lobbies = new();
+    private string NewLobbyName = "";
+    private string CurrentUser = "Player1"; // TODO: Hook up to auth system
+    private string ErrorMessage = "";
+
+    protected override void OnInitialized() => RefreshLobbies();
+    private void RefreshLobbies() => Lobbies = LobbyService.GetAvailableLobbies();
+    private void ReturnHome() => Navigation.NavigateTo("/");
+
+    private void CreateLobby()
+    {
+        ErrorMessage = "";
+        if (string.IsNullOrWhiteSpace(NewLobbyName)) return;
+
+        if (Lobbies.Any(l => l.LobbyName.Equals(NewLobbyName, StringComparison.OrdinalIgnoreCase)))
+        {
+            ErrorMessage = "Table name exists.";
+            return;
+        }
+
+      
+        LobbyService.CreateLobby(NewLobbyName, CurrentUser);
+        
+        
+        JoinLobby(NewLobbyName); 
+    }
+
+    private void JoinLobby(string lobbyName)
+    {
+        if(LobbyService.JoinLobby(lobbyName, CurrentUser))
+        {
+            Navigation.NavigateTo($"/poker-game/{lobbyName}");
+        }
+        else
+        {
+            ErrorMessage = "Could not join table.";
+            RefreshLobbies(); 
+        }
+    }
+}
