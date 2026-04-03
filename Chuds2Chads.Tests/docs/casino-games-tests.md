@@ -4,10 +4,10 @@
 
 - Dedicated xUnit test project: `Chuds2Chads.Tests`
 - Unit tests for the horse racing, roulette, and slots backend services
-- A GitHub Actions workflow at `.github/workflows/backend-tests.yml`
+- GitHub Actions workflow at `.github/workflows/backend-tests.yml`
 - Automatic test execution on every push and every pull request
 
-## How the unit tests are organized
+## Organization
 
 The backend game logic is tested at the service layer so that the game rules can be verified without rendering the Blazor UI.
 
@@ -30,18 +30,26 @@ The backend game logic is tested at the service layer so that the game rules can
   - two-cherry special case
   - losing spins
 
-## GitHub Actions
+## Running Tests in GitHub Actions
 
-The workflow is stored in `.github/workflows/backend-tests.yml`. GitHub automatically discovers workflow files in that folder.
+The workflows are stored in `.github/workflows/`. GitHub automatically discovers and runs these on every `push` and `pull_request` to the specified branches (main, develop).
 
-On every `push` and `pull_request`, GitHub Actions will:
+### Workflow Steps (backend-tests.yml):
 
 1. Check out the repository code.
-2. Install the .NET 10 SDK.
-3. Restore NuGet packages with `dotnet restore`.
-4. Build the solution in Release mode.
-5. Run all unit tests with `dotnet test`.
-6. Collect code coverage using `XPlat Code Coverage`.
-7. Upload the test result artifacts so failures can be inspected in GitHub.
+2. Set up .NET 10 SDK.
+3. Restore NuGet packages with `dotnet restore Chuds2Chads.sln`.
+4. Build the solution in Release mode with `dotnet build Chuds2Chads.sln --configuration Release --no-restore`.
+5. Run all unit tests with `dotnet test --solution Chuds2Chads.sln --configuration Release --no-build --report-xunit-trx --results-directory TestResults`.
+6. Upload test results as artifacts for inspection.
+
+### Viewing Results:
+- Go to the repository on GitHub.
+- Navigate to the "Actions" tab.
+- Select the workflow run.
+- Check the "Run unit tests" step for output.
+- Download artifacts if needed for detailed reports.
+
+Ensure .NET 10 SDK is installed and the solution builds without errors before running tests.
 
 

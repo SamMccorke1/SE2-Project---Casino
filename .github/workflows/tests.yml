@@ -26,4 +26,4 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run Tests
-        run: dotnet test --no-build
+        run: dotnet test --solution Chuds2Chads.sln --no-build
