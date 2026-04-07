@@ -76,6 +76,7 @@
                            type="text"
                            placeholder="Enter your username"
                            @bind="username"
+                           @bind:event="oninput"
                            @onkeydown="HandleKeyDown" />
                 </div>
             </div>
@@ -90,6 +91,7 @@
                            type="@(showPassword ? "text" : "password")"
                            placeholder="Enter your password"
                            @bind="password"
+                           @bind:event="oninput"
                            @onkeydown="HandleKeyDown" />
                     <button class="toggle-password" @onclick="TogglePassword" type="button">
                         @if (showPassword)
