@@ -64,9 +64,15 @@
                                 <div class="meta">Asset: @item.AssetKey</div>
                                 <div class="meta">Object ID: @item.ObjectId</div>
                                 <div class="meta">Earned: @item.EarnedUtc.ToLocalTime().ToString("g")</div>
-                                <button class="equip-button" disabled="@item.IsEquipped" @onclick="() => EquipAsync(item.ObjectId)">
-                                    @(item.IsEquipped ? "Equipped" : "Equip")
-                                </button>
+                                @if (item.IsEquipped)
+                                {
+                                    <button class="equip-button equip-button--equipped" disabled>Equipped</button>
+                                    <button class="unequip-button" @onclick="() => UnequipAsync(item.Slot)">Unequip</button>
+                                }
+                                else
+                                {
+                                    <button class="equip-button" @onclick="() => EquipAsync(item.ObjectId)">Equip</button>
+                                }
                             </article>
                         }
                     }
@@ -256,10 +262,28 @@
     color: #04110b;
 }
 
-.equip-button:disabled {
+.equip-button--equipped {
     background: rgba(74, 222, 128, 0.25);
     color: #a7f3d0;
     cursor: default;
+}
+
+.unequip-button {
+    margin-top: 4px;
+    margin-left: 6px;
+    border: 1px solid rgba(248, 113, 113, 0.5);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: #f87171;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.unequip-button:hover {
+    background: rgba(248, 113, 113, 0.12);
+    border-color: #f87171;
 }
 
 .empty-slot {
@@ -312,8 +336,7 @@
         AvatarSlot.Body,
         AvatarSlot.Torso,
         AvatarSlot.Legs,
-        AvatarSlot.Shoe,
-        AvatarSlot.Pet
+        AvatarSlot.Shoe
     ];
 
     private bool isLoading = true;
@@ -409,7 +432,17 @@
             message = "Failed to equip item.";
             return;
         }
+        await LoadAsync();
+    }
 
+    private async Task UnequipAsync(AvatarSlot slot)
+    {
+        var ok = await AvatarService.UnequipAsync(userId, slot);
+        if (!ok)
+        {
+            message = "Failed to unequip item.";
+            return;
+        }
         await LoadAsync();
     }
 }

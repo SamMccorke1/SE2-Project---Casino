@@ -7,6 +7,7 @@ public class CosmeticDefinition
     public string Name { get; set; } = string.Empty;
     public string AssetKey { get; set; } = string.Empty;
     public string Rarity { get; set; } = "Common";
+    public bool IsDefault { get; set; } = true;
 
     public ICollection<UserCosmeticItem> OwnedItems { get; set; } = new List<UserCosmeticItem>();
 }
