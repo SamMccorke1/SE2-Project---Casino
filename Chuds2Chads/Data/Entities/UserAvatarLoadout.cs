@@ -9,6 +9,7 @@ public class UserAvatarLoadout
 
     public Guid? HeadObjectId { get; set; }
     public Guid? FaceObjectId { get; set; }
+    public Guid? BodyObjectId { get; set; }
     public Guid? TorsoObjectId { get; set; }
     public Guid? LegsObjectId { get; set; }
     public Guid? ShoeObjectId { get; set; }

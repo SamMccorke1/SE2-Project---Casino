@@ -38,16 +38,28 @@ public class AvatarService
             _db.UserAvatarLoadouts.Add(loadout);
         }
 
-        foreach (var slot in Enum.GetValues<AvatarSlot>())
-        {
-            var hasItemForSlot = await _db.UserCosmeticItems
-                .Include(i => i.CosmeticDefinition)
-                .AnyAsync(i => i.UserId == userId && i.CosmeticDefinition!.Slot == slot);
+        var ownedDefinitionIds = await _db.UserCosmeticItems
+            .AsNoTracking()
+            .Where(i => i.UserId == userId)
+            .Select(i => i.CosmeticDefinitionId)
+            .ToHashSetAsync();
 
-            if (!hasItemForSlot)
+        var missingDefinitions = await _db.CosmeticDefinitions
+            .AsNoTracking()
+            .Where(c => !ownedDefinitionIds.Contains(c.Id))
+            .ToListAsync();
+
+        if (missingDefinitions.Count > 0)
+        {
+            var now = DateTime.UtcNow;
+            foreach (var definition in missingDefinitions)
             {
-                var starterAsset = GetStarterAssetKey(slot);
-                await GrantCosmeticAsync(userId, starterAsset);
+                _db.UserCosmeticItems.Add(new UserCosmeticItem
+                {
+                    UserId = userId,
+                    CosmeticDefinitionId = definition.Id,
+                    EarnedUtc = now
+                });
             }
         }
 
@@ -60,6 +72,7 @@ public class AvatarService
 
         loadout.HeadObjectId ??= slotItems.FirstOrDefault(i => i.CosmeticDefinition?.Slot == AvatarSlot.Head)?.ObjectId;
         loadout.FaceObjectId ??= slotItems.FirstOrDefault(i => i.CosmeticDefinition?.Slot == AvatarSlot.Face)?.ObjectId;
+        loadout.BodyObjectId ??= slotItems.FirstOrDefault(i => i.CosmeticDefinition?.Slot == AvatarSlot.Body)?.ObjectId;
         loadout.TorsoObjectId ??= slotItems.FirstOrDefault(i => i.CosmeticDefinition?.Slot == AvatarSlot.Torso)?.ObjectId;
         loadout.LegsObjectId ??= slotItems.FirstOrDefault(i => i.CosmeticDefinition?.Slot == AvatarSlot.Legs)?.ObjectId;
         loadout.ShoeObjectId ??= slotItems.FirstOrDefault(i => i.CosmeticDefinition?.Slot == AvatarSlot.Shoe)?.ObjectId;
@@ -101,6 +114,7 @@ public class AvatarService
             EarnedUtc = i.EarnedUtc,
             IsEquipped = i.ObjectId == loadout.HeadObjectId
                 || i.ObjectId == loadout.FaceObjectId
+                || i.ObjectId == loadout.BodyObjectId
                 || i.ObjectId == loadout.TorsoObjectId
                 || i.ObjectId == loadout.LegsObjectId
                 || i.ObjectId == loadout.ShoeObjectId
@@ -113,6 +127,7 @@ public class AvatarService
             {
                 [AvatarSlot.Head] = loadout.HeadObjectId,
                 [AvatarSlot.Face] = loadout.FaceObjectId,
+                [AvatarSlot.Body] = loadout.BodyObjectId,
                 [AvatarSlot.Torso] = loadout.TorsoObjectId,
                 [AvatarSlot.Legs] = loadout.LegsObjectId,
                 [AvatarSlot.Shoe] = loadout.ShoeObjectId,
@@ -146,6 +161,9 @@ public class AvatarService
                 break;
             case AvatarSlot.Face:
                 loadout.FaceObjectId = item.ObjectId;
+                break;
+            case AvatarSlot.Body:
+                loadout.BodyObjectId = item.ObjectId;
                 break;
             case AvatarSlot.Torso:
                 loadout.TorsoObjectId = item.ObjectId;
@@ -189,23 +207,17 @@ public class AvatarService
         return true;
     }
 
-    private static string GetStarterAssetKey(AvatarSlot slot) => slot switch
-    {
-        AvatarSlot.Head => "head.base.cap",
-        AvatarSlot.Face => "face.base.smile",
-        AvatarSlot.Torso => "torso.base.jacket",
-        AvatarSlot.Legs => "legs.base.denim",
-        AvatarSlot.Shoe => "shoe.base.sneaker",
-        AvatarSlot.Pet => "pet.base.chipmunk",
-        _ => throw new ArgumentOutOfRangeException(nameof(slot), slot, "Unsupported slot.")
-    };
-
     private static IReadOnlyList<CosmeticDefinition> GetCatalogDefaults() =>
     [
         new() { Slot = AvatarSlot.Head, Name = "Lucky Cap", AssetKey = "head.base.cap", Rarity = "Common" },
         new() { Slot = AvatarSlot.Head, Name = "Dealer Top Hat", AssetKey = "head.dealer.top-hat", Rarity = "Rare" },
         new() { Slot = AvatarSlot.Face, Name = "Lucky Smile", AssetKey = "face.base.smile", Rarity = "Common" },
         new() { Slot = AvatarSlot.Face, Name = "Poker Shades", AssetKey = "face.poker.shades", Rarity = "Rare" },
+        new() { Slot = AvatarSlot.Body, Name = "Skin Tone 2", AssetKey = "body.skin.tone-2", Rarity = "Common" },
+        new() { Slot = AvatarSlot.Body, Name = "Skin Tone 3", AssetKey = "body.skin.tone-3", Rarity = "Common" },
+        new() { Slot = AvatarSlot.Body, Name = "Skin Tone 4", AssetKey = "body.skin.tone-4", Rarity = "Common" },
+        new() { Slot = AvatarSlot.Body, Name = "Skin Tone 5", AssetKey = "body.skin.tone-5", Rarity = "Common" },
+        new() { Slot = AvatarSlot.Body, Name = "Skin Tone 6", AssetKey = "body.skin.tone-6", Rarity = "Common" },
         new() { Slot = AvatarSlot.Torso, Name = "Starter Jacket", AssetKey = "torso.base.jacket", Rarity = "Common" },
         new() { Slot = AvatarSlot.Torso, Name = "Royal Blazer", AssetKey = "torso.royal.blazer", Rarity = "Epic" },
         new() { Slot = AvatarSlot.Legs, Name = "Denim Pants", AssetKey = "legs.base.denim", Rarity = "Common" },
@@ -218,8 +230,43 @@ public class AvatarService
 
     private string ResolveCosmeticImagePath(string assetKey)
     {
-        // Support both dot and dash filename styles and common image extensions.
+        // Prefer explicit mappings for the current uploaded PNG set.
         var normalized = assetKey.Trim().ToLowerInvariant();
+
+        var explicitMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["head.base.cap"] = "avatarhairs/hair1.png",
+            ["head.dealer.top-hat"] = "avatarhairs/hair2.png",
+            ["face.base.smile"] = "avatarbodies/body2.png",
+            ["face.poker.shades"] = "avatarbodies/body3.png",
+            ["body.skin.tone-2"] = "avatarbodies/body2.png",
+            ["body.skin.tone-3"] = "avatarbodies/body3.png",
+            ["body.skin.tone-4"] = "avatarbodies/body4.png",
+            ["body.skin.tone-5"] = "avatarbodies/body5.png",
+            ["body.skin.tone-6"] = "avatarbodies/body6.png",
+            ["torso.base.jacket"] = "avatartops/shirt1.png",
+            ["torso.royal.blazer"] = "avatartops/shirt3.png",
+            ["legs.base.denim"] = "avatarbottoms/shorts1.png",
+            ["legs.velvet.trousers"] = "avatarbottoms/skirt2.png",
+            ["shoe.base.sneaker"] = "avatarshoes/shoes1.png",
+            ["shoe.gold.loafer"] = "avatarshoes/shoes2.png",
+            ["pet.base.chipmunk"] = "avatarbodies/body5.png",
+            ["pet.mini.lion"] = "avatarbodies/body6.png"
+        };
+
+        if (explicitMap.TryGetValue(normalized, out var mappedPath))
+        {
+            var mappedAbsolute = Path.Combine(
+                _environment.WebRootPath,
+                mappedPath.Replace('/', Path.DirectorySeparatorChar));
+
+            if (File.Exists(mappedAbsolute))
+            {
+                return "/" + mappedPath;
+            }
+        }
+
+        // Fallback: support both dot and dash filename styles and common image extensions.
         var dashed = normalized.Replace('.', '-');
 
         var candidateRelativePaths = new[]

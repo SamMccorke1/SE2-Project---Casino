@@ -4,8 +4,9 @@ public enum AvatarSlot
 {
     Head = 1,
     Face = 2,
-    Torso = 3,
-    Legs = 4,
-    Shoe = 5,
-    Pet = 6
+    Body = 3,
+    Torso = 4,
+    Legs = 5,
+    Shoe = 6,
+    Pet = 7
 }

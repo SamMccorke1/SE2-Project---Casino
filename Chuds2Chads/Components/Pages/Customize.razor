@@ -127,10 +127,10 @@
     background: rgba(15, 23, 42, 0.8);
     border: 1px solid rgba(74, 222, 128, 0.2);
     border-radius: 8px;
-    padding: 10px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
 }
 
 .preview-label {
@@ -148,11 +148,17 @@
 
 .preview-image {
     width: 100%;
-    height: 88px;
+    aspect-ratio: 1 / 1;
+    min-height: 120px;
+    max-height: 160px;
     object-fit: contain;
     border-radius: 6px;
-    background: rgba(2, 6, 23, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.25);
+    padding: 10px;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.95)),
+        repeating-conic-gradient(from 45deg, rgba(148, 163, 184, 0.12) 0 25%, transparent 0 50%) 50% / 14px 14px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .inventory-grid {
@@ -195,17 +201,28 @@
 
 .cosmetic-image {
     width: 100%;
-    height: 120px;
+    aspect-ratio: 1 / 1;
+    min-height: 150px;
+    max-height: 210px;
     object-fit: contain;
-    margin-bottom: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
     border-radius: 6px;
-    background: rgba(2, 6, 23, 0.65);
-    border: 1px solid rgba(148, 163, 184, 0.22);
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98)),
+        repeating-conic-gradient(from 45deg, rgba(148, 163, 184, 0.12) 0 25%, transparent 0 50%) 50% / 16px 16px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .cosmetic-item.equipped {
     border-color: rgba(74, 222, 128, 0.9);
     box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.45);
+}
+
+.cosmetic-item.equipped .cosmetic-image,
+.preview-item:has(.preview-value:not(:empty)) .preview-image {
+    border-color: rgba(74, 222, 128, 0.45);
 }
 
 .cosmetic-top-row {
@@ -276,6 +293,14 @@
     .preview-grid {
         grid-template-columns: 1fr;
     }
+
+    .cosmetic-image {
+        min-height: 130px;
+    }
+
+    .preview-image {
+        min-height: 110px;
+    }
 }
 </style>
 
@@ -284,6 +309,7 @@
     [
         AvatarSlot.Head,
         AvatarSlot.Face,
+        AvatarSlot.Body,
         AvatarSlot.Torso,
         AvatarSlot.Legs,
         AvatarSlot.Shoe,
