@@ -1,5 +1,6 @@
 using Chuds2Chads.Data;
 using Chuds2Chads.Data.Entities;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chuds2Chads.Services;
@@ -7,10 +8,12 @@ namespace Chuds2Chads.Services;
 public class AvatarService
 {
     private readonly AppDbContext _db;
+    private readonly IWebHostEnvironment _environment;
 
-    public AvatarService(AppDbContext db)
+    public AvatarService(AppDbContext db, IWebHostEnvironment environment)
     {
         _db = db;
+        _environment = environment;
     }
 
     public async Task EnsureCatalogSeededAsync()
@@ -78,29 +81,31 @@ public class AvatarService
             return null;
         }
 
-        var inventory = await _db.UserCosmeticItems
+        var inventoryItems = await _db.UserCosmeticItems
             .AsNoTracking()
             .Include(i => i.CosmeticDefinition)
             .Where(i => i.UserId == userId)
             .OrderBy(i => i.CosmeticDefinition!.Slot)
             .ThenBy(i => i.CosmeticDefinition!.Name)
             .ThenBy(i => i.EarnedUtc)
-            .Select(i => new OwnedCosmeticDto
-            {
-                ObjectId = i.ObjectId,
-                Slot = i.CosmeticDefinition!.Slot,
-                Name = i.CosmeticDefinition.Name,
-                AssetKey = i.CosmeticDefinition.AssetKey,
-                Rarity = i.CosmeticDefinition.Rarity,
-                EarnedUtc = i.EarnedUtc,
-                IsEquipped = i.ObjectId == loadout.HeadObjectId
-                    || i.ObjectId == loadout.FaceObjectId
-                    || i.ObjectId == loadout.TorsoObjectId
-                    || i.ObjectId == loadout.LegsObjectId
-                    || i.ObjectId == loadout.ShoeObjectId
-                    || i.ObjectId == loadout.PetObjectId
-            })
             .ToListAsync();
+
+        var inventory = inventoryItems.Select(i => new OwnedCosmeticDto
+        {
+            ObjectId = i.ObjectId,
+            Slot = i.CosmeticDefinition!.Slot,
+            Name = i.CosmeticDefinition.Name,
+            AssetKey = i.CosmeticDefinition.AssetKey,
+            ImagePath = ResolveCosmeticImagePath(i.CosmeticDefinition.AssetKey),
+            Rarity = i.CosmeticDefinition.Rarity,
+            EarnedUtc = i.EarnedUtc,
+            IsEquipped = i.ObjectId == loadout.HeadObjectId
+                || i.ObjectId == loadout.FaceObjectId
+                || i.ObjectId == loadout.TorsoObjectId
+                || i.ObjectId == loadout.LegsObjectId
+                || i.ObjectId == loadout.ShoeObjectId
+                || i.ObjectId == loadout.PetObjectId
+        }).ToList();
 
         return new AvatarCustomizationData
         {
@@ -210,6 +215,43 @@ public class AvatarService
         new() { Slot = AvatarSlot.Pet, Name = "Chipmunk", AssetKey = "pet.base.chipmunk", Rarity = "Common" },
         new() { Slot = AvatarSlot.Pet, Name = "Mini Lion", AssetKey = "pet.mini.lion", Rarity = "Legendary" }
     ];
+
+    private string ResolveCosmeticImagePath(string assetKey)
+    {
+        // Support both dot and dash filename styles and common image extensions.
+        var normalized = assetKey.Trim().ToLowerInvariant();
+        var dashed = normalized.Replace('.', '-');
+
+        var candidateRelativePaths = new[]
+        {
+            $"images/cosmetics/basic/{normalized}.png",
+            $"images/cosmetics/basic/{dashed}.png",
+            $"images/cosmetics/{normalized}.png",
+            $"images/cosmetics/{dashed}.png",
+            $"images/cosmetics/basic/{normalized}.webp",
+            $"images/cosmetics/basic/{dashed}.webp",
+            $"images/cosmetics/{normalized}.webp",
+            $"images/cosmetics/{dashed}.webp",
+            $"images/cosmetics/basic/{normalized}.jpg",
+            $"images/cosmetics/basic/{dashed}.jpg",
+            $"images/cosmetics/{normalized}.jpg",
+            $"images/cosmetics/{dashed}.jpg"
+        };
+
+        foreach (var relativePath in candidateRelativePaths)
+        {
+            var absolutePath = Path.Combine(
+                _environment.WebRootPath,
+                relativePath.Replace('/', Path.DirectorySeparatorChar));
+
+            if (File.Exists(absolutePath))
+            {
+                return "/" + relativePath.Replace('\\', '/');
+            }
+        }
+
+        return "/images/C2C-Logo-Transparent.png";
+    }
 }
 
 public class AvatarCustomizationData
@@ -224,6 +266,7 @@ public class OwnedCosmeticDto
     public AvatarSlot Slot { get; set; }
     public string Name { get; set; } = string.Empty;
     public string AssetKey { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
     public string Rarity { get; set; } = string.Empty;
     public DateTime EarnedUtc { get; set; }
     public bool IsEquipped { get; set; }

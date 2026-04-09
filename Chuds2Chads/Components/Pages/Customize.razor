@@ -35,6 +35,7 @@
                 {
                     <div class="preview-item">
                         <span class="preview-label">@slot</span>
+                        <img class="preview-image" src="@GetEquippedImagePath(slot)" alt="@($"{slot} cosmetic")" />
                         <span class="preview-value">@GetEquippedLabel(slot)</span>
                     </div>
                 }
@@ -55,6 +56,7 @@
                         @foreach (var item in items)
                         {
                             <article class="cosmetic-item @(item.IsEquipped ? "equipped" : "")">
+                                <img class="cosmetic-image" src="@item.ImagePath" alt="@item.Name" />
                                 <div class="cosmetic-top-row">
                                     <strong>@item.Name</strong>
                                     <span class="rarity">@item.Rarity</span>
@@ -144,6 +146,15 @@
     font-weight: 600;
 }
 
+.preview-image {
+    width: 100%;
+    height: 88px;
+    object-fit: contain;
+    border-radius: 6px;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
 .inventory-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -180,6 +191,16 @@
     padding: 10px;
     margin-bottom: 10px;
     background: rgba(15, 23, 42, 0.65);
+}
+
+.cosmetic-image {
+    width: 100%;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: rgba(2, 6, 23, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.22);
 }
 
 .cosmetic-item.equipped {
@@ -336,6 +357,22 @@
 
         var equippedItem = items.FirstOrDefault(i => i.ObjectId == equippedObjectId.Value);
         return equippedItem?.Name ?? "None";
+    }
+
+    private string GetEquippedImagePath(AvatarSlot slot)
+    {
+        if (!equippedBySlot.TryGetValue(slot, out var equippedObjectId) || equippedObjectId is null)
+        {
+            return "/images/C2C-Logo-Transparent.png";
+        }
+
+        if (!inventoryBySlot.TryGetValue(slot, out var items))
+        {
+            return "/images/C2C-Logo-Transparent.png";
+        }
+
+        var equippedItem = items.FirstOrDefault(i => i.ObjectId == equippedObjectId.Value);
+        return equippedItem?.ImagePath ?? "/images/C2C-Logo-Transparent.png";
     }
 
     private async Task EquipAsync(Guid objectId)
