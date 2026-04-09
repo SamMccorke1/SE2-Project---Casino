@@ -1,7 +1,9 @@
-Chuds2Chads/bin/Debug/net9.0/Chuds2Chads.dll
-Chuds2Chads/obj/Debug/net9.0/Chuds2Chads.GeneratedMSBuildEditorConfig.editorconfig
-Chuds2Chads/obj/Debug/net9.0/Chuds2Chads.AssemblyInfoInputs.cache
-Chuds2Chads/obj/Debug/net9.0/Chuds2Chads.AssemblyInfo.cs
-Chuds2Chads/obj/Debug/net9.0/Chuds2Chads.assets.cache
-Chuds2Chads/obj
-Chuds2Chads/bin
+**/bin/
+**/obj/
+**/TestResults/
+.artifacts/
+*.user
+*.suo
+*.db
+*.db-shm
+*.db-wal

@@ -53,6 +53,7 @@ builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<Chuds2Chads.Games.Blackjack.BlackjackLobbyService>();
+builder.Services.AddSingleton<Chuds2Chads.Games.Poker.PokerLobbyService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
