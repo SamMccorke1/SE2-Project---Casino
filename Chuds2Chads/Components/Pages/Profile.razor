@@ -15,90 +15,6 @@
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
 
-    @if (isLoading)
-    {
-        <div class="alert alert-loading">Loading profile...</div>
-    }
-    else if (!string.IsNullOrEmpty(message))
-    {
-        <div class="alert alert-error">@message</div>
-    }
-    else if (user != null)
-    {
-        <div class="profile-card">
-            <div class="profile-avatar">
-                <div class="avatar-placeholder">@GetAvatarGlyph()</div>
-                <div class="avatar-loadout">
-                    @foreach (var slot in OrderedSlots)
-                    {
-                        <div class="avatar-row">
-                            <span class="avatar-slot">@slot</span>
-                            <span class="avatar-item">@GetEquippedName(slot)</span>
-                        </div>
-                    }
-                </div>
-            </div>
-            
-            <div class="profile-info">
-                <h2>@user.UserName</h2>
-                <p class="email">@user.Email</p>
-                <p class="member-since">Member since @user.CreatedDate.ToString("MMMM d, yyyy")</p>
-                <div class="profile-tags">
-                    <span class="tag tag-tier">Tier: Bronze</span>
-                    <span class="tag tag-status">Status: Active</span>
-                </div>
-            </div>
-
-            <div class="profile-stats">
-                <div class="stat">
-                    <span class="stat-label">Balance</span>
-                    <span class="stat-value">$1,000</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Games Played</span>
-                    <span class="stat-value">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Wins</span>
-                    <span class="stat-value">0</span>
-                </div>
-            </div>
-
-            <div class="profile-grid">
-                <div class="profile-panel">
-                    <h3 class="panel-title">Casino Snapshot</h3>
-                    <div class="panel-row">
-                        <span class="panel-label">Win Rate</span>
-                        <span class="panel-value">0%</span>
-                    </div>
-                    <div class="panel-row">
-                        <span class="panel-label">Favorite Game</span>
-                        <span class="panel-value">Blackjack</span>
-                    </div>
-                    <div class="panel-row">
-                        <span class="panel-label">Longest Streak</span>
-                        <span class="panel-value">0</span>
-                    </div>
-                    <div class="panel-row">
-                        <span class="panel-label">Last Seen</span>
-                        <span class="panel-value">Just now</span>
-                    </div>
-                </div>
-
-                <div class="profile-panel">
-                    <h3 class="panel-title">Recent Activity</h3>
-                    <ul class="activity-list">
-                        <li>Joined the casino lobby</li>
-                        <li>Viewed Blackjack tables</li>
-                        <li>Updated profile settings</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                <button class="btn-customize" @onclick="GoToCustomization">Customize Character</button>
-                <button class="btn-logout" @onclick="HandleLogout">Logout</button>
-            </div>
     <div class="profile-container">
         <div class="profile-header">
             <NavLink href="/Dashboard" class="back-link">← Back to Casino</NavLink>
@@ -117,7 +33,16 @@
         {
             <div class="profile-card">
                 <div class="profile-avatar">
-                    <div class="avatar-placeholder">@user.UserName[0]</div>
+                    <div class="avatar-placeholder">@GetAvatarGlyph()</div>
+                    <div class="avatar-loadout">
+                        @foreach (var slot in OrderedSlots)
+                        {
+                            <div class="avatar-row">
+                                <span class="avatar-slot">@slot</span>
+                                <span class="avatar-item">@GetEquippedName(slot)</span>
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 <div class="profile-info">
@@ -184,7 +109,6 @@
         }
     </div>
 </div>
-
 <style>
 /* ===== Page Shell ===== */
 .profile-page {
