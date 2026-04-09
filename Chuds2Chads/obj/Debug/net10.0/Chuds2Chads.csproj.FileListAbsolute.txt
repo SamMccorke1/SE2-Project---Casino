@@ -424,16 +424,24 @@ C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debu
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-7jdqmz0nc9-7jdqmz0nc9.gz
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-ax6tuj8tun-ax6tuj8tun.gz
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\633hdj8dxo-{0}-zr4b1gdhaw-zr4b1gdhaw.gz
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.Data.Sqlite.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Sqlite.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\SQLitePCLRaw.batteries_v2.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\SQLitePCLRaw.core.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\SQLitePCLRaw.provider.e_sqlite3.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\appsettings.Development.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\appsettings.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.staticwebassets.runtime.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.staticwebassets.endpoints.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.deps.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.runtimeconfig.json
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.pdb
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Humanizer.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.Build.Framework.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.CodeAnalysis.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.CodeAnalysis.CSharp.dll
@@ -441,19 +449,11 @@ C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.CodeAnalysis.Workspaces.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.CodeAnalysis.ExternalAccess.RazorCompiler.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.Data.Sqlite.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Design.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Relational.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.EntityFrameworkCore.Sqlite.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.Extensions.DependencyModel.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Microsoft.VisualStudio.SolutionPersistence.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Mono.TextTemplating.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Newtonsoft.Json.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\SQLitePCLRaw.batteries_v2.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\SQLitePCLRaw.core.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\SQLitePCLRaw.provider.e_sqlite3.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\System.CodeDom.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\System.Composition.AttributedModel.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\System.Composition.Convention.dll
@@ -546,7 +546,6 @@ C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\runtimes\osx-x64\native\libe_sqlite3.dylib
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\runtimes\win-arm\native\e_sqlite3.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\runtimes\win-arm64\native\e_sqlite3.dll
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\runtimes\win-x86\native\e_sqlite3.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\EmbeddedAttribute.cs
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\ValidatableTypeAttribute.cs
@@ -622,8 +621,8 @@ C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\rpydzsv8mn-{0}-h1s4sie4z3-h1s4sie4z3.gz
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\cd74osybx6-{0}-63fj8s7r0e-63fj8s7r0e.gz
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\4rxnogzcxo-{0}-0j3bgjxly4-0j3bgjxly4.gz
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-7jdqmz0nc9-7jdqmz0nc9.gz
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-7jdqmz0nc9-7jdqmz0nc9.gz
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-jc1v0tz5nw-jc1v0tz5nw.gz
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-jc1v0tz5nw-jc1v0tz5nw.gz
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.development.json
@@ -634,4 +633,6 @@ C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\refint\Chuds2Chads.dll
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.pdb
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.genruntimeconfig.cache
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.pdb
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\ref\Chuds2Chads.dll
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-mgww215af1-mgww215af1.gz

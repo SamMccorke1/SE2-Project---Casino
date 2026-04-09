@@ -73,6 +73,23 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+if (app.Environment.IsDevelopment())
+{
+    app.Use(async (context, next) =>
+    {
+        await next();
+
+        // Prevent stale Blazor runtime assets from being served from browser cache during development.
+        if (context.Request.Path.StartsWithSegments("/_framework"))
+        {
+            context.Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+            context.Response.Headers.Pragma = "no-cache";
+            context.Response.Headers.Expires = "0";
+        }
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -81,11 +98,11 @@ app.UseAntiforgery();
 
 // Static assets + Blazor endpoints
 app.MapStaticAssets();
-app.MapRazorPages();
-app.MapControllers();
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapRazorPages();
+app.MapControllers();
 
 app.Run();
 

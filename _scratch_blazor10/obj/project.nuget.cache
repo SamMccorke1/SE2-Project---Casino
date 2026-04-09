@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "rX2zQgDLwFg=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\llitz\\Documents\\GitHub\\SE2-Project---Casino\\_scratch_blazor10\\_scratch_blazor10.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\llitz\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.4\\microsoft.aspnetcore.app.internal.assets.10.0.4.nupkg.sha512"
+  ],
+  "logs": []
+}
