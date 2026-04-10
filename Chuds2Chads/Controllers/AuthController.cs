@@ -1,6 +1,9 @@
 using Chuds2Chads.Data;
 using Chuds2Chads.Services;
+<<<<<<< HEAD
 using Microsoft.Data.Sqlite;
+=======
+>>>>>>> origin/main
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,16 +16,28 @@ namespace Chuds2Chads.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+<<<<<<< HEAD
         private readonly MultiplayerService _multiplayerService;
+=======
+        private readonly AvatarService _avatarService;
+>>>>>>> origin/main
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+<<<<<<< HEAD
             MultiplayerService multiplayerService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _multiplayerService = multiplayerService;
+=======
+            AvatarService avatarService)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _avatarService = avatarService;
+>>>>>>> origin/main
         }
 
         [HttpPost("register")]
@@ -77,10 +92,16 @@ namespace Chuds2Chads.Controllers
                 }
             }
 
+<<<<<<< HEAD
             var errors = result is null
                 ? "Registration failed."
                 : string.Join(", ", result.Errors.Select(e => e.Description));
             return BadRequest(new { error = errors });
+=======
+            await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
+
+            return Ok(new { message = "Account created successfully!" });
+>>>>>>> origin/main
         }
 
         [HttpPost("login")]

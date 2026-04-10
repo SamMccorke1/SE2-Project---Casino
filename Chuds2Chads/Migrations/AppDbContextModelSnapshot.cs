@@ -101,12 +101,17 @@ namespace Chuds2Chads.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Chuds2Chads.Data.Entities.FriendRequest", b =>
+=======
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.CosmeticDefinition", b =>
+>>>>>>> origin/main
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+<<<<<<< HEAD
                     b.Property<DateTime>("CreatedUtc")
                         .HasColumnType("TEXT");
 
@@ -120,10 +125,29 @@ namespace Chuds2Chads.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
+=======
+                    b.Property<string>("AssetKey")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Rarity")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Slot")
+>>>>>>> origin/main
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+<<<<<<< HEAD
                     b.HasIndex("RequesterUserId", "RequesteeUserId", "Status");
 
                     b.ToTable("FriendRequests");
@@ -150,6 +174,12 @@ namespace Chuds2Chads.Migrations
                         .IsUnique();
 
                     b.ToTable("Friendships");
+=======
+                    b.HasIndex("AssetKey")
+                        .IsUnique();
+
+                    b.ToTable("CosmeticDefinitions");
+>>>>>>> origin/main
                 });
 
             modelBuilder.Entity("Chuds2Chads.Data.Entities.GameRoom", b =>
@@ -337,6 +367,68 @@ namespace Chuds2Chads.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserAvatarLoadout", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("BodyObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("FaceObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("HeadObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("LegsObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("PetObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ShoeObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("TorsoObjectId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserAvatarLoadouts");
+                });
+
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserCosmeticItem", b =>
+                {
+                    b.Property<Guid>("ObjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CosmeticDefinitionId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EarnedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ObjectId");
+
+                    b.HasIndex("CosmeticDefinitionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserCosmeticItems");
+                });
+
             modelBuilder.Entity("Chuds2Chads.Data.Entities.Wallet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -508,6 +600,36 @@ namespace Chuds2Chads.Migrations
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserAvatarLoadout", b =>
+                {
+                    b.HasOne("Chuds2Chads.Data.ApplicationUser", "User")
+                        .WithOne("AvatarLoadout")
+                        .HasForeignKey("Chuds2Chads.Data.Entities.UserAvatarLoadout", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserCosmeticItem", b =>
+                {
+                    b.HasOne("Chuds2Chads.Data.Entities.CosmeticDefinition", "CosmeticDefinition")
+                        .WithMany("OwnedItems")
+                        .HasForeignKey("CosmeticDefinitionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Chuds2Chads.Data.ApplicationUser", "User")
+                        .WithMany("OwnedCosmeticItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CosmeticDefinition");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Chuds2Chads.Data.Entities.Wallet", b =>
                 {
                     b.HasOne("Chuds2Chads.Data.ApplicationUser", "User")
@@ -568,6 +690,18 @@ namespace Chuds2Chads.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Chuds2Chads.Data.ApplicationUser", b =>
+                {
+                    b.Navigation("AvatarLoadout");
+
+                    b.Navigation("OwnedCosmeticItems");
+                });
+
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.CosmeticDefinition", b =>
+                {
+                    b.Navigation("OwnedItems");
                 });
 
             modelBuilder.Entity("Chuds2Chads.Data.Entities.GameRoom", b =>

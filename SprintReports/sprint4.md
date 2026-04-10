@@ -1,4 +1,4 @@
-Samuel, Matthew, Lucas, Caleb, Rio
+Samuel, Matthew, Lucas, Caleb, Reo
 Sprint 4
 Scrum Master: Samuel McCorkel
 Sprint Goal

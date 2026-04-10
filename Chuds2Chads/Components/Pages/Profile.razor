@@ -1,11 +1,20 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Components.Routing
+<<<<<<< HEAD
 @using System.Security.Claims
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 @inject AuthenticationStateProvider AuthStateProvider
 @inject WalletService WalletService
+=======
+@using Chuds2Chads.Data.Entities
+@using Chuds2Chads.Services
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject AvatarService AvatarService
+>>>>>>> origin/main
 @attribute [Authorize]
 
 <PageTitle>Profile - Chuds to Chads Casino</PageTitle>
@@ -33,7 +42,17 @@
         {
             <div class="profile-card">
                 <div class="profile-avatar">
-                    <div class="avatar-placeholder">@user.UserName[0]</div>
+                    <div class="avatar-canvas">
+                        @foreach (var layer in AvatarLayers)
+                        {
+                            var src = GetEquippedImagePath(layer);
+                            if (!string.IsNullOrEmpty(src))
+                            {
+                                <img class="avatar-layer avatar-layer-@layer.ToString().ToLower()" src="@src" alt="@layer" />
+                            }
+                        }
+                    </div>
+                    <p class="avatar-name">@user.UserName</p>
                 </div>
 
                 <div class="profile-info">
@@ -100,7 +119,6 @@
         }
     </div>
 </div>
-
 <style>
 /* ===== Page Shell ===== */
 .profile-page {
@@ -213,24 +231,69 @@
     text-align: center;
 }
 
-/* ===== Avatar ===== */
+/* ===== Avatar Canvas ===== */
 .profile-avatar {
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.avatar-placeholder {
-    width: 96px;
-    height: 96px;
-    background: linear-gradient(135deg, #00ff41, #ffd700);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Russo One', sans-serif;
-    font-size: 2.5rem;
-    color: #0a0118;
+.avatar-canvas {
+    position: relative;
+    width: 220px;
+    height: 320px;
     margin: 0 auto;
-    box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(2, 6, 23, 0.6);
+    border: 1px solid rgba(0, 255, 65, 0.2);
+    box-shadow: 0 0 40px rgba(0, 255, 65, 0.08);
+}
+
+.avatar-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Stacking order — higher z-index = rendered on top */
+.avatar-layer-body  {
+    z-index: 1;
+    width: 96%;
+    height: 96%;
+    top: 17%;
+    left: 2%;
+    right: unset;
+    bottom: unset;
+    object-fit: contain;
+    object-position: top left;
+}
+.avatar-layer-legs  { z-index: 2; }
+.avatar-layer-shoe  { z-index: 3; }
+.avatar-layer-torso { z-index: 4; }
+.avatar-layer-face  {
+    z-index: 5;
+    width: 22%;
+    height: 22%;
+    top: 19%;
+    left: 40%;
+    right: unset;
+    bottom: unset;
+    object-fit: contain;
+}
+.avatar-layer-head  { z-index: 6; }
+
+.avatar-name {
+    font-family: 'Russo One', sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 /* ===== User Info ===== */
@@ -474,6 +537,7 @@
 
 @code {
     private UserProfile? user;
+    private AvatarCustomizationData? avatarData;
     private string message = "";
     private bool isLoading = true;
     private long balance;
@@ -506,6 +570,7 @@
                 {
                     message = "Profile data is unavailable.";
                 }
+<<<<<<< HEAD
                 else
                 {
                     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
@@ -514,6 +579,11 @@
                     {
                         balance = await WalletService.GetBalanceAsync(userId) ?? 0;
                     }
+=======
+                else if (Guid.TryParse(user.Id, out var parsedUserId))
+                {
+                    avatarData = await AvatarService.GetCustomizationDataAsync(parsedUserId);
+>>>>>>> origin/main
                 }
             }
             else
@@ -532,6 +602,25 @@
             isLoading = false;
             StateHasChanged();
         }
+    }
+
+    // Layers rendered bottom-to-top; z-index is handled in CSS.
+    private static readonly AvatarSlot[] AvatarLayers =
+    [
+        AvatarSlot.Body,
+        AvatarSlot.Legs,
+        AvatarSlot.Shoe,
+        AvatarSlot.Torso,
+        AvatarSlot.Face,
+        AvatarSlot.Head
+    ];
+
+    private string GetEquippedImagePath(AvatarSlot slot)
+    {
+        if (avatarData is null) return string.Empty;
+        if (!avatarData.EquippedObjectIds.TryGetValue(slot, out var id) || id is null) return string.Empty;
+        var item = avatarData.OwnedCosmetics.FirstOrDefault(i => i.ObjectId == id.Value);
+        return item?.ImagePath ?? string.Empty;
     }
 
     private void GoToCustomization()
@@ -568,6 +657,7 @@
         public string Email { get; set; } = "";
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
+<<<<<<< HEAD
 
     private static string FormatChips(long chips)
     {
@@ -576,3 +666,6 @@
         return $"${chips}";
     }
 }
+=======
+}
+>>>>>>> origin/main
