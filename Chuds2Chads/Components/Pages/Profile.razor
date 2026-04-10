@@ -1,20 +1,14 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Components.Routing
-<<<<<<< HEAD
 @using System.Security.Claims
-@rendermode InteractiveServer
-@inject NavigationManager Navigation
-@inject IJSRuntime JS
-@inject AuthenticationStateProvider AuthStateProvider
-@inject WalletService WalletService
-=======
 @using Chuds2Chads.Data.Entities
 @using Chuds2Chads.Services
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+@inject WalletService WalletService
 @inject AvatarService AvatarService
->>>>>>> origin/main
 @attribute [Authorize]
 
 <PageTitle>Profile - Chuds to Chads Casino</PageTitle>
@@ -120,7 +114,6 @@
     </div>
 </div>
 <style>
-/* ===== Page Shell ===== */
 .profile-page {
     min-height: 100vh;
     background: linear-gradient(135deg, #0a0118 0%, #1a0933 100%);
@@ -130,7 +123,6 @@
     overflow-x: hidden;
 }
 
-/* ===== Background Effects ===== */
 .bg-grid {
     position: fixed;
     inset: 0;
@@ -176,7 +168,6 @@
     50%       { transform: translate(30px, -30px) scale(1.1); }
 }
 
-/* ===== Layout ===== */
 .profile-container {
     max-width: 860px;
     margin: 0 auto;
@@ -190,7 +181,6 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Page Header ===== */
 .profile-header {
     margin-bottom: 2.5rem;
 }
@@ -222,7 +212,6 @@
     transform: translateX(-4px);
 }
 
-/* ===== Profile Card ===== */
 .profile-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(0, 255, 65, 0.2);
@@ -231,7 +220,6 @@
     text-align: center;
 }
 
-/* ===== Avatar Canvas ===== */
 .profile-avatar {
     margin-bottom: 1.5rem;
     display: flex;
@@ -260,7 +248,6 @@
     object-fit: contain;
 }
 
-/* Stacking order — higher z-index = rendered on top */
 .avatar-layer-body  {
     z-index: 1;
     width: 96%;
@@ -296,7 +283,6 @@
     text-transform: uppercase;
 }
 
-/* ===== User Info ===== */
 .profile-info h2 {
     font-family: 'Russo One', sans-serif;
     font-size: 2rem;
@@ -337,7 +323,6 @@
     color: #00d4ff;
 }
 
-/* ===== Stats Row ===== */
 .profile-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -384,7 +369,6 @@
     line-height: 1;
 }
 
-/* ===== Info Panels ===== */
 .profile-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -449,7 +433,6 @@
     border-left: 2px solid rgba(0, 255, 65, 0.3);
 }
 
-/* ===== Action Buttons ===== */
 .profile-actions {
     display: flex;
     gap: 1rem;
@@ -496,7 +479,6 @@
     transform: translateY(-2px);
 }
 
-/* ===== Alerts ===== */
 .alert {
     padding: 1rem 1.5rem;
     border-radius: 10px;
@@ -515,7 +497,6 @@
     border: 1px solid rgba(0, 255, 65, 0.3);
 }
 
-/* ===== Responsive ===== */
 @@media (max-width: 700px) {
     .profile-card {
         padding: 2rem 1.5rem;
@@ -570,20 +551,19 @@
                 {
                     message = "Profile data is unavailable.";
                 }
-<<<<<<< HEAD
                 else
                 {
+                    if (Guid.TryParse(user.Id, out var parsedUserId))
+                    {
+                        avatarData = await AvatarService.GetCustomizationDataAsync(parsedUserId);
+                    }
+
                     var authState = await AuthStateProvider.GetAuthenticationStateAsync();
                     var idClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                     if (Guid.TryParse(idClaim, out var userId))
                     {
                         balance = await WalletService.GetBalanceAsync(userId) ?? 0;
                     }
-=======
-                else if (Guid.TryParse(user.Id, out var parsedUserId))
-                {
-                    avatarData = await AvatarService.GetCustomizationDataAsync(parsedUserId);
->>>>>>> origin/main
                 }
             }
             else
@@ -604,7 +584,6 @@
         }
     }
 
-    // Layers rendered bottom-to-top; z-index is handled in CSS.
     private static readonly AvatarSlot[] AvatarLayers =
     [
         AvatarSlot.Body,
@@ -657,7 +636,6 @@
         public string Email { get; set; } = "";
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
     }
-<<<<<<< HEAD
 
     private static string FormatChips(long chips)
     {
@@ -666,6 +644,3 @@
         return $"${chips}";
     }
 }
-=======
-}
->>>>>>> origin/main

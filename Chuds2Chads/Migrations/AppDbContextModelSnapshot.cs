@@ -101,31 +101,12 @@ namespace Chuds2Chads.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.FriendRequest", b =>
-=======
             modelBuilder.Entity("Chuds2Chads.Data.Entities.CosmeticDefinition", b =>
->>>>>>> origin/main
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-<<<<<<< HEAD
-                    b.Property<DateTime>("CreatedUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("RequesteeUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("RequesterUserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("RespondedUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-=======
                     b.Property<string>("AssetKey")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -142,12 +123,39 @@ namespace Chuds2Chads.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Slot")
->>>>>>> origin/main
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
+                    b.HasIndex("AssetKey")
+                        .IsUnique();
+
+                    b.ToTable("CosmeticDefinitions");
+                });
+
+            modelBuilder.Entity("Chuds2Chads.Data.Entities.FriendRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("RequesteeUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("RequesterUserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("RespondedUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
                     b.HasIndex("RequesterUserId", "RequesteeUserId", "Status");
 
                     b.ToTable("FriendRequests");
@@ -174,12 +182,6 @@ namespace Chuds2Chads.Migrations
                         .IsUnique();
 
                     b.ToTable("Friendships");
-=======
-                    b.HasIndex("AssetKey")
-                        .IsUnique();
-
-                    b.ToTable("CosmeticDefinitions");
->>>>>>> origin/main
                 });
 
             modelBuilder.Entity("Chuds2Chads.Data.Entities.GameRoom", b =>

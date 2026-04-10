@@ -1,11 +1,8 @@
 using Chuds2Chads.Data;
 using Chuds2Chads.Services;
-<<<<<<< HEAD
-using Microsoft.Data.Sqlite;
-=======
->>>>>>> origin/main
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Chuds2Chads.Controllers
@@ -16,28 +13,19 @@ namespace Chuds2Chads.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-<<<<<<< HEAD
         private readonly MultiplayerService _multiplayerService;
-=======
         private readonly AvatarService _avatarService;
->>>>>>> origin/main
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-<<<<<<< HEAD
-            MultiplayerService multiplayerService)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _multiplayerService = multiplayerService;
-=======
+            MultiplayerService multiplayerService,
             AvatarService avatarService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _multiplayerService = multiplayerService;
             _avatarService = avatarService;
->>>>>>> origin/main
         }
 
         [HttpPost("register")]
@@ -56,6 +44,7 @@ namespace Chuds2Chads.Controllers
                 return BadRequest(new { error = "Email already in use." });
 
             IdentityResult? result = null;
+            Guid? createdUserId = null;
             const int maxAttempts = 5;
 
             for (var attempt = 0; attempt < maxAttempts; attempt++)
@@ -77,7 +66,9 @@ namespace Chuds2Chads.Controllers
                     result = await _userManager.CreateAsync(user, request.Password);
                     if (result.Succeeded)
                     {
+                        createdUserId = user.Id;
                         await _multiplayerService.EnsureUserSetupAsync(user.Id);
+                        await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
                         return Ok(new { message = "Account created successfully!" });
                     }
 
@@ -92,16 +83,15 @@ namespace Chuds2Chads.Controllers
                 }
             }
 
-<<<<<<< HEAD
+            if (createdUserId.HasValue)
+            {
+                await _avatarService.EnsureUserAvatarInitializedAsync(createdUserId.Value);
+            }
+
             var errors = result is null
                 ? "Registration failed."
                 : string.Join(", ", result.Errors.Select(e => e.Description));
             return BadRequest(new { error = errors });
-=======
-            await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
-
-            return Ok(new { message = "Account created successfully!" });
->>>>>>> origin/main
         }
 
         [HttpPost("login")]
@@ -128,6 +118,7 @@ namespace Chuds2Chads.Controllers
 
             await _signInManager.SignInAsync(user, isPersistent: false);
             await _multiplayerService.EnsureUserSetupAsync(user.Id);
+            await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
             await _multiplayerService.SetPresenceAsync(user.Id, UserPresenceStatus.Online);
 
             return Ok(new
@@ -160,7 +151,10 @@ namespace Chuds2Chads.Controllers
             {
                 return Unauthorized();
             }
+
             await _multiplayerService.EnsureUserSetupAsync(user.Id);
+            await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
+
             return Ok(new
             {
                 id = user.Id,
@@ -190,5 +184,4 @@ namespace Chuds2Chads.Controllers
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
-
 }
