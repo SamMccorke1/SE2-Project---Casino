@@ -8,16 +8,19 @@ namespace Chuds2Chads.Games.Poker
 
     public class PokerPlayer
     {
+        public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public List<Card> Hand { get; set; } = new();
         
         // Banking & Betting
-        public int Gold { get; set; } = 1000; // Starting bankroll
-        public int CurrentBet { get; set; } = 0;
+        public long Gold { get; set; } = 1000;
+        public long InitialGold { get; set; } = 1000;
+        public long CurrentBet { get; set; } = 0;
         
         // State
         public bool HasFolded { get; set; }
         public bool IsBot { get; set; }
+        public bool IsDisconnected { get; set; }
         public bool IsAllIn => Gold == 0 && CurrentBet > 0;
         public bool HasActedThisRound { get; set; }
 

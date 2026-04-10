@@ -1,6 +1,9 @@
 using Chuds2Chads.Data;
+using Chuds2Chads.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chuds2Chads.Controllers
 {
@@ -10,11 +13,16 @@ namespace Chuds2Chads.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly MultiplayerService _multiplayerService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AuthController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            MultiplayerService multiplayerService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _multiplayerService = multiplayerService;
         }
 
         [HttpPost("register")]
@@ -32,60 +40,93 @@ namespace Chuds2Chads.Controllers
             if (existingEmail != null)
                 return BadRequest(new { error = "Email already in use." });
 
-            var user = new ApplicationUser
-            {
-                UserName = request.Username,
-                Email = email
-            };
+            IdentityResult? result = null;
+            const int maxAttempts = 5;
 
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
+            for (var attempt = 0; attempt < maxAttempts; attempt++)
             {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return BadRequest(new { error = errors });
+                var user = new ApplicationUser
+                {
+                    Id = Guid.NewGuid(),
+                    UserName = request.Username,
+                    Email = email,
+                    CreatedDate = DateTime.UtcNow,
+                    LastSeenUtc = DateTime.UtcNow,
+                    PresenceStatus = UserPresenceStatus.Offline
+                };
+
+                user.FriendCode = await _multiplayerService.GenerateUniqueFriendCodeAsync(user.Id);
+
+                try
+                {
+                    result = await _userManager.CreateAsync(user, request.Password);
+                    if (result.Succeeded)
+                    {
+                        await _multiplayerService.EnsureUserSetupAsync(user.Id);
+                        return Ok(new { message = "Account created successfully!" });
+                    }
+
+                    break;
+                }
+                catch (DbUpdateException ex) when (IsFriendCodeConflict(ex))
+                {
+                    if (attempt == maxAttempts - 1)
+                    {
+                        return BadRequest(new { error = "Could not generate a unique friend code. Please try again." });
+                    }
+                }
             }
 
-            return Ok(new { message = "Account created successfully!" });
+            var errors = result is null
+                ? "Registration failed."
+                : string.Join(", ", result.Errors.Select(e => e.Description));
+            return BadRequest(new { error = errors });
         }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
-    {
-        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            return BadRequest("Username and password are required.");
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest("Username and password are required.");
+            }
+
+            var user = await _userManager.FindByNameAsync(request.Username) ??
+                       await _userManager.FindByEmailAsync(request.Username);
+
+            if (user == null)
+            {
+                return Unauthorized(new { error = "Invalid username or password." });
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+            if (!result.Succeeded)
+            {
+                return Unauthorized(new { error = "Invalid username or password." });
+            }
+
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _multiplayerService.EnsureUserSetupAsync(user.Id);
+            await _multiplayerService.SetPresenceAsync(user.Id, UserPresenceStatus.Online);
+
+            return Ok(new
+            {
+                message = "Login successful!",
+                userId = user.Id,
+                userName = user.UserName,
+                email = user.Email
+            });
         }
-
-        // Find user
-        var user = await _userManager.FindByNameAsync(request.Username) ?? 
-                  await _userManager.FindByEmailAsync(request.Username);
-        
-        if (user == null)
-        {
-            return Unauthorized(new { error = "Invalid username or password." });
-        }
-
-        // Check password using SignInManager
-        var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!result.Succeeded)
-        {
-            return Unauthorized(new { error = "Invalid username or password." });
-        }
-
-        // Sign in the user (this sets the authentication cookie)
-        await _signInManager.SignInAsync(user, isPersistent: false);
-
-        return Ok(new { 
-            message = "Login successful!", 
-            userId = user.Id, 
-            userName = user.UserName,
-            email = user.Email
-        });
-    }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user is not null)
+            {
+                await _multiplayerService.SetPresenceAsync(user.Id, UserPresenceStatus.Offline);
+            }
+
             await _signInManager.SignOutAsync();
             return Ok(new { message = "Logged out successfully." });
         }
@@ -98,7 +139,22 @@ namespace Chuds2Chads.Controllers
             {
                 return Unauthorized();
             }
-            return Ok(new { id = user.Id, userName = user.UserName, email = user.Email, createdDate = user.CreatedDate });
+            await _multiplayerService.EnsureUserSetupAsync(user.Id);
+            return Ok(new
+            {
+                id = user.Id,
+                userName = user.UserName,
+                email = user.Email,
+                createdDate = user.CreatedDate,
+                friendCode = user.FriendCode
+            });
+        }
+
+        private static bool IsFriendCodeConflict(DbUpdateException exception)
+        {
+            return exception.InnerException is SqliteException sqliteException &&
+                   sqliteException.SqliteErrorCode == 19 &&
+                   sqliteException.Message.Contains("AspNetUsers.FriendCode", StringComparison.OrdinalIgnoreCase);
         }
     }
 
@@ -113,4 +169,5 @@ namespace Chuds2Chads.Controllers
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
+
 }

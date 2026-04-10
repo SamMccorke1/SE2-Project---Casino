@@ -90,6 +90,43 @@ public class WalletService
     }
 
     /// <summary>
+    /// Applies a signed balance adjustment and records a matching transaction entry.
+    /// Positive values credit chips and negative values deduct chips.
+    /// </summary>
+    public async Task<bool> AdjustBalanceAsync(Guid userId, long amount, string reference)
+    {
+        if (amount == 0) return true;
+
+        var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+        if (wallet is null)
+        {
+            wallet = new Wallet { UserId = userId, Balance = 0 };
+            _db.Wallets.Add(wallet);
+        }
+
+        if (amount < 0 && wallet.Balance < Math.Abs(amount))
+        {
+            return false;
+        }
+
+        wallet.Balance += amount;
+        wallet.UpdatedUtc = DateTime.UtcNow;
+
+        _db.Transactions.Add(new Transaction
+        {
+            UserId = userId,
+            Type = TransactionType.Adjustment,
+            Amount = amount,
+            BalanceAfter = wallet.Balance,
+            Reference = reference,
+            CreatedUtc = DateTime.UtcNow
+        });
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    /// <summary>
     /// Ensures a wallet row exists for the user (called after registration / first login).
     /// Safe to call multiple times — is a no-op if the wallet already exists.
     /// </summary>

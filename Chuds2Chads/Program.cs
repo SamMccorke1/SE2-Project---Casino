@@ -47,6 +47,7 @@ builder.Services.AddScoped<WalletService>();
 builder.Services.AddScoped<RouletteService>();
 builder.Services.AddScoped<SlotsService>();
 builder.Services.AddScoped<HorseRaceService>();
+builder.Services.AddSingleton<MultiplayerService>();
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
@@ -54,6 +55,15 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<Chuds2Chads.Games.Blackjack.BlackjackLobbyService>();
 builder.Services.AddSingleton<Chuds2Chads.Games.Poker.PokerLobbyService>();
 var app = builder.Build();
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var multiplayerService = scope.ServiceProvider.GetRequiredService<MultiplayerService>();
+    await db.Database.MigrateAsync();
+    await SeedData.InitializeAsync(scope.ServiceProvider);
+    await multiplayerService.BackfillMissingFriendCodesAsync();
+}
 
 // Pipeline
 if (!app.Environment.IsDevelopment())

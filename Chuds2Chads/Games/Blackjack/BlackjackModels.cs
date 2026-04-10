@@ -68,10 +68,13 @@ namespace Chuds2Chads.Games.Blackjack
 
     public class Player
     {
+        public Guid UserId { get; set; }
         public string Name { get; set; } = string.Empty;
         public List<Card> Hand { get; set; } = new();
         public bool IsDealer { get; set; }
-        
+        public long CurrentBet { get; set; }
+        public bool IsDisconnected { get; set; }
+        public bool IsReady { get; set; }
         public bool HasStood { get; set; }
         public bool HasWon { get; set; }
         public bool IsPush { get; set; }
@@ -97,6 +100,8 @@ namespace Chuds2Chads.Games.Blackjack
         public void Reset()
         {
             Hand.Clear();
+            CurrentBet = 0;
+            IsReady = false;
             HasStood = false;
             HasWon = false;
             IsPush = false;

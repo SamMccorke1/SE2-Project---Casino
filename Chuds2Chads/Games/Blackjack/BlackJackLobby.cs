@@ -5,7 +5,7 @@ namespace Chuds2Chads.Games.Blackjack
 {
     public class BlackjackLobby
     {
-        public string LobbyName { get; set; }
+        public string LobbyName { get; set; } = string.Empty;
         public List<string> Players { get; set; } = new();
         public int MaxPlayers { get; set; } = 4;
 

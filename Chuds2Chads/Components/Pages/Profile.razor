@@ -1,8 +1,11 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Components.Routing
+@using System.Security.Claims
 @rendermode InteractiveServer
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
+@inject AuthenticationStateProvider AuthStateProvider
+@inject WalletService WalletService
 @attribute [Authorize]
 
 <PageTitle>Profile - Chuds to Chads Casino</PageTitle>
@@ -46,7 +49,7 @@
                 <div class="profile-stats">
                     <div class="stat stat-chips">
                         <span class="stat-label">Balance</span>
-                        <span class="stat-value">$1,000</span>
+                        <span class="stat-value">@FormatChips(balance)</span>
                     </div>
                     <div class="stat stat-games">
                         <span class="stat-label">Games Played</span>
@@ -473,6 +476,7 @@
     private UserProfile? user;
     private string message = "";
     private bool isLoading = true;
+    private long balance;
 
     private sealed class ApiResult
     {
@@ -501,6 +505,15 @@
                 if (user == null)
                 {
                     message = "Profile data is unavailable.";
+                }
+                else
+                {
+                    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+                    var idClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (Guid.TryParse(idClaim, out var userId))
+                    {
+                        balance = await WalletService.GetBalanceAsync(userId) ?? 0;
+                    }
                 }
             }
             else
@@ -554,5 +567,12 @@
         public string UserName { get; set; } = "";
         public string Email { get; set; } = "";
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    }
+
+    private static string FormatChips(long chips)
+    {
+        if (chips >= 1_000_000) return $"${chips / 1_000_000.0:F1}M";
+        if (chips >= 1_000) return $"${chips / 1_000.0:F1}K";
+        return $"${chips}";
     }
 }
