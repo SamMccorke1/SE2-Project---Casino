@@ -1,9 +1,15 @@
 Sprint Report 5 — Chuds2Chads Casino
+
 Scrum Master: Reo Day
+
 Sprint Duration: 3/9-3/13
+
 Repository: https://github.com/SamMccorke1/SE2-Project---Casino.git
+
 Trello Board: https://trello.com/b/oZdqoLQ2
+
 Sprint Goal: The goal of this sprint was to prepare a fully integrated and presentable version of the application for the Midterm demonstration. This included refining the existing codebase, improving documentation, ensuring all components run from a single machine, and delivering a clean, functional interface that showcases completed features from previous sprints.
+
 PBIs Chosen for the Sprint
 •	Codebase cleanup and refactoring 
 •	Full system integration and stabilization 
@@ -11,10 +17,12 @@ PBIs Chosen for the Sprint
 •	UI refinement for demonstration 
 •	Finalization of playable game interfaces 
 •	Repository preparation for evaluation 
+
 Actions Performed:
 •	Reduced focus on new feature development 
 •	Prioritized integration, testing, and documentation 
 •	Verified all features could be demonstrated live 
+
 Sprint Planning Activity Summary: The team reviewed the Midterm requirements and aligned sprint goals accordingly. Tasks were broken down into refinement-focused work rather than new development. Responsibilities were assigned based on prior contributions to ensure efficient completion. The team also identified risks related to integration and demonstration readiness.
 Sprint Tasks 
 Task 1
@@ -67,7 +75,6 @@ Roadblocks
 •	Time constraints balancing cleanup and validation 
 •	Ensuring all features worked correctly from a single environment 
 
-
 Sprint Review 
 Was the Sprint Goal Achieved?
 Yes. The system was successfully prepared for the Midterm demonstration with all required components integrated and functional.
@@ -99,6 +106,7 @@ Definition of Ready (DoR):
 •	Relevant to current sprint goal 
 •	Feasible within sprint timeframe 
 •	No unresolved dependencies 
+
 Daily Scrum Summaries
 Daily Scrum 1
 Reo Day: Completed core Horse Racing logic and began refining gameplay behavior
@@ -112,6 +120,7 @@ Samuel McCorkel: Finalized integration and ensured system stability
 Matthew Williams: Completed UI refinements for demonstration
 Lucas Litzenberger: Finished refactoring and verified functionality
 Caleb Blevins: Finalized documentation and repository organization
+
 Attendance
 Caleb Blevins: Present for both sessions.
 Matthew Williams: Present for both sessions.
