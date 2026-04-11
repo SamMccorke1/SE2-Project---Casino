@@ -4,6 +4,11 @@
 .artifacts/
 *.user
 *.suo
+.vs/
+.idea/
 *.db
 *.db-shm
 *.db-wal
+*.sqlite
+*.cache.json
+*.FileListAbsolute.txt

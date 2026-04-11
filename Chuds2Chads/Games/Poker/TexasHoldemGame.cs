@@ -15,18 +15,18 @@ namespace Chuds2Chads.Games.Poker
         public List<PokerPlayer> Players { get; set; } = new();
         public List<Card> CommunityCards { get; private set; } = new();
         
-        public int Pot { get; private set; } = 0;
-        public int CurrentHighestBet { get; private set; } = 0;
+        public long Pot { get; private set; } = 0;
+        public long CurrentHighestBet { get; private set; } = 0;
         
         // Turn Order & Blinds
         public int CurrentTurnIndex { get; private set; } = 0;
         public int DealerIndex { get; private set; } = 0; 
-        public int SmallBlindAmount { get; set; } = 10;
-        public int BigBlindAmount { get; set; } = 20;
+        public long SmallBlindAmount { get; set; } = 10;
+        public long BigBlindAmount { get; set; } = 20;
 
         public PokerPlayer? CurrentPlayer => Players.ElementAtOrDefault(CurrentTurnIndex);
         public string WinnerName { get; private set; } = "";
-        public int WinAmount { get; private set; } = 0;
+        public long WinAmount { get; private set; } = 0;
 
         public Action? OnGameStateChanged;
         private Random _rng = new Random();
@@ -91,13 +91,13 @@ namespace Chuds2Chads.Games.Poker
             var bbPlayer = Players[bbIndex];
 
             // Post Small Blind
-            int actualSb = Math.Min(sbPlayer.Gold, SmallBlindAmount);
+            long actualSb = Math.Min(sbPlayer.Gold, SmallBlindAmount);
             sbPlayer.Gold -= actualSb;
             sbPlayer.CurrentBet = actualSb;
             Pot += actualSb;
 
             // Post Big Blind
-            int actualBb = Math.Min(bbPlayer.Gold, BigBlindAmount);
+            long actualBb = Math.Min(bbPlayer.Gold, BigBlindAmount);
             bbPlayer.Gold -= actualBb;
             bbPlayer.CurrentBet = actualBb;
             Pot += actualBb;
@@ -105,7 +105,7 @@ namespace Chuds2Chads.Games.Poker
             CurrentHighestBet = BigBlindAmount;
         }
 
-        public void ProcessPlayerAction(string playerName, PokerAction action, int betAmount = 0)
+        public void ProcessPlayerAction(string playerName, PokerAction action, long betAmount = 0)
         {
             if (CurrentPlayer == null || CurrentPlayer.Name != playerName || Phase == PokerPhase.GameOver) return;
 
@@ -121,12 +121,12 @@ namespace Chuds2Chads.Games.Poker
                     if (player.CurrentBet < CurrentHighestBet) return; // Illegal check
                     break;
                 case PokerAction.Call:
-                    int callAmount = Math.Min(player.Gold, CurrentHighestBet - player.CurrentBet);
+                    long callAmount = Math.Min(player.Gold, CurrentHighestBet - player.CurrentBet);
                     PlaceBet(player, callAmount);
                     break;
                 case PokerAction.Raise:
-                    int totalBet = CurrentHighestBet + betAmount;
-                    int raiseAmount = Math.Min(player.Gold, totalBet - player.CurrentBet);
+                    long totalBet = CurrentHighestBet + betAmount;
+                    long raiseAmount = Math.Min(player.Gold, totalBet - player.CurrentBet);
                     PlaceBet(player, raiseAmount);
                     break;
             }
@@ -134,7 +134,7 @@ namespace Chuds2Chads.Games.Poker
             AdvanceTurn();
         }
 
-        private void PlaceBet(PokerPlayer player, int amount)
+        private void PlaceBet(PokerPlayer player, long amount)
         {
             player.Gold -= amount;
             player.CurrentBet += amount;
@@ -248,7 +248,7 @@ namespace Chuds2Chads.Games.Poker
         private async Task HandleWinner(List<PokerPlayer> winners, string winningHandText)
         {
             Phase = PokerPhase.GameOver;
-            int splitAmount = Pot / winners.Count;
+            long splitAmount = Pot / winners.Count;
             WinAmount = splitAmount;
             
             foreach(var winner in winners) winner.Gold += splitAmount;
@@ -266,8 +266,7 @@ namespace Chuds2Chads.Games.Poker
             Pot = 0;
             NotifyStateChanged();
 
-            await Task.Delay(4000);
-            StartNewRound();
+            await Task.CompletedTask;
         }
 
         private async void CheckIfBotTurn()
@@ -276,7 +275,7 @@ namespace Chuds2Chads.Games.Poker
             {
                 await Task.Delay(1500); // Bot "thinking"
                 
-                int costToCall = CurrentHighestBet - CurrentPlayer.CurrentBet;
+                long costToCall = CurrentHighestBet - CurrentPlayer.CurrentBet;
                 
                 // Smarter Bot Logic
                 if (costToCall > 0)

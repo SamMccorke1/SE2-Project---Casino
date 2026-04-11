@@ -1,39 +1,53 @@
-# 🎰 Chuds2Chads Casino  
+# Chuds2Chads Casino
+
 Software Engineering II Group Project
 
+## Setup
 
-# Setup Instructions
+### Install .NET 10 SDK
 
-## Install .NET 10 SDK
-###  (Windows)
+Windows:
+
 ```powershell
 winget install Microsoft.DotNet.SDK.10 --source winget
-Verify
-dotnet--list-sdks
-Install Ef Tool
+dotnet --list-sdks
+```
+
+### Install EF Core tooling
+
+```powershell
 dotnet tool install --global dotnet-ef
-Verify 
 dotnet ef --version
-Clone the Repository
+```
+
+### Clone and run
+
+```powershell
 git clone <YOUR_REPO_URL_HERE>
 cd <YOUR_REPO_FOLDER>
 cd Chuds2Chads
-Restore and Build
 dotnet restore
 dotnet build
-Database Setup
-Make sure appsettings.json contains:
+dotnet ef database update
+dotnet run
+```
+
+Open the local URL shown in the terminal, for example:
+
+`http://localhost:5138`
+
+## Database
+
+Make sure `appsettings.json` contains a valid SQLite connection string, for example:
+
+```json
 {
   "ConnectionStrings": {
     "DefaultConnection": "Data Source=casino.db"
   }
 }
-Then Run
-dotnet ef database update
-If the migrations do not exist
-dotnet ef database update
-Run the app
-dotnet run
-Open the local URL shown in the termial is such as:
-http://localhost:5138
+```
 
+## Multiplayer demo
+
+For step-by-step local multiplayer testing across two accounts and two browser sessions, see [MULTIPLAYER_TESTING.md](./MULTIPLAYER_TESTING.md).

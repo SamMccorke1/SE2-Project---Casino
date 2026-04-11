@@ -9,6 +9,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
+        
     }
 
     public DbSet<Wallet> Wallets => Set<Wallet>();
@@ -16,6 +17,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     public DbSet<GameRoom> GameRooms => Set<GameRoom>();
     public DbSet<RoomPlayer> RoomPlayers => Set<RoomPlayer>();
     public DbSet<GameSession> GameSessions => Set<GameSession>();
+    public DbSet<FriendRequest> FriendRequests => Set<FriendRequest>();
+    public DbSet<Friendship> Friendships => Set<Friendship>();
+    public DbSet<GameRoomInvite> GameRoomInvites => Set<GameRoomInvite>();
     public DbSet<CosmeticDefinition> CosmeticDefinitions => Set<CosmeticDefinition>();
     public DbSet<UserCosmeticItem> UserCosmeticItems => Set<UserCosmeticItem>();
     public DbSet<UserAvatarLoadout> UserAvatarLoadouts => Set<UserAvatarLoadout>();
@@ -28,8 +32,23 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             .HasIndex(r => r.Code)
             .IsUnique();
 
+        modelBuilder.Entity<ApplicationUser>()
+            .HasIndex(u => u.FriendCode)
+            .IsUnique();
+
         modelBuilder.Entity<Wallet>()
             .HasIndex(w => w.UserId)
+            .IsUnique();
+
+        modelBuilder.Entity<Friendship>()
+            .HasIndex(f => new { f.UserId, f.FriendUserId })
+            .IsUnique();
+
+        modelBuilder.Entity<FriendRequest>()
+            .HasIndex(f => new { f.RequesterUserId, f.RequesteeUserId, f.Status });
+
+        modelBuilder.Entity<GameRoomInvite>()
+            .HasIndex(i => new { i.RoomId, i.InviteeUserId })
             .IsUnique();
 
         modelBuilder.Entity<GameRoom>()

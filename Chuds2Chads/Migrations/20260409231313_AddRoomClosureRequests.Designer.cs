@@ -3,6 +3,7 @@ using System;
 using Chuds2Chads.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chuds2Chads.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260409231313_AddRoomClosureRequests")]
+    partial class AddRoomClosureRequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.3");
@@ -99,38 +102,6 @@ namespace Chuds2Chads.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.CosmeticDefinition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("AssetKey")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsDefault")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Rarity")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Slot")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AssetKey")
-                        .IsUnique();
-
-                    b.ToTable("CosmeticDefinitions");
                 });
 
             modelBuilder.Entity("Chuds2Chads.Data.Entities.FriendRequest", b =>
@@ -369,68 +340,6 @@ namespace Chuds2Chads.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserAvatarLoadout", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("BodyObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("FaceObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("HeadObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("LegsObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("PetObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ShoeObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("TorsoObjectId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserAvatarLoadouts");
-                });
-
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserCosmeticItem", b =>
-                {
-                    b.Property<Guid>("ObjectId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CosmeticDefinitionId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("EarnedUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ObjectId");
-
-                    b.HasIndex("CosmeticDefinitionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCosmeticItems");
-                });
-
             modelBuilder.Entity("Chuds2Chads.Data.Entities.Wallet", b =>
                 {
                     b.Property<Guid>("Id")
@@ -602,36 +511,6 @@ namespace Chuds2Chads.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserAvatarLoadout", b =>
-                {
-                    b.HasOne("Chuds2Chads.Data.ApplicationUser", "User")
-                        .WithOne("AvatarLoadout")
-                        .HasForeignKey("Chuds2Chads.Data.Entities.UserAvatarLoadout", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.UserCosmeticItem", b =>
-                {
-                    b.HasOne("Chuds2Chads.Data.Entities.CosmeticDefinition", "CosmeticDefinition")
-                        .WithMany("OwnedItems")
-                        .HasForeignKey("CosmeticDefinitionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Chuds2Chads.Data.ApplicationUser", "User")
-                        .WithMany("OwnedCosmeticItems")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CosmeticDefinition");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Chuds2Chads.Data.Entities.Wallet", b =>
                 {
                     b.HasOne("Chuds2Chads.Data.ApplicationUser", "User")
@@ -692,18 +571,6 @@ namespace Chuds2Chads.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Chuds2Chads.Data.ApplicationUser", b =>
-                {
-                    b.Navigation("AvatarLoadout");
-
-                    b.Navigation("OwnedCosmeticItems");
-                });
-
-            modelBuilder.Entity("Chuds2Chads.Data.Entities.CosmeticDefinition", b =>
-                {
-                    b.Navigation("OwnedItems");
                 });
 
             modelBuilder.Entity("Chuds2Chads.Data.Entities.GameRoom", b =>

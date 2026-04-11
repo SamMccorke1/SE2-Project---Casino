@@ -21,5 +21,5 @@ No significant technical blockers were encountered during this period.
 - **Caleb:** Database schema design & site architecture (in progress)
 - **Mathew:** Front-end design & home page implementation (in progress)
 - **Lucas:** Authentication system research & initial logic (in progress)
-- **Samuel:** Blackjack module core development (in progress)
-- **Rio:** Poker module core development (in progress)
+- **Samuel:** Blackjack and Poker module core development (in progress)
+- **Reo:** Games module core development (in progress)
