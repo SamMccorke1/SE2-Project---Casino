@@ -35,6 +35,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<WalletService>();
+builder.Services.AddScoped<LeaderboardService>();
 builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<RouletteService>();
 builder.Services.AddScoped<SlotsService>();
