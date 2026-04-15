@@ -4,6 +4,7 @@
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthStateProvider
 @inject MultiplayerService MultiplayerService
+@inject LeaderboardService LeaderboardService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 @implements IAsyncDisposable
@@ -266,15 +267,44 @@
                         <span>🏆 Top Chads</span>
                     </h2>
                     <div class="leaderboard-list">
-                        <div class="leader-item">
-                            <div class="leader-rank rank-1">1</div>
-                            <div class="leader-avatar">C</div>
-                            <div class="leader-info">
-                                <div class="leader-name">Leaderboard Placeholder</div>
-                                <div class="leader-chips">This area is reserved for the leaderboard system that will be implemented after multiplayer.</div>
+                        @if (leaderboardEntries.Count == 0)
+                        {
+                            <div class="leader-item">
+                                <div class="leader-rank rank-1">-</div>
+                                <div class="leader-avatar">C</div>
+                                <div class="leader-info">
+                                    <div class="leader-name">No Ranked Players Yet</div>
+                                    <div class="leader-chips">Registered players will appear here once their wallet balance is available.</div>
+                                </div>
                             </div>
-                            <div class="leader-medal">🥇</div>
-                        </div>
+                        }
+                        else
+                        {
+                            @foreach (var player in VisibleLeaderboardEntries)
+                            {
+                                var isCurrentUser = player.UserId == currentUserId;
+                                var decoration = GetLeaderboardDecoration(player.Rank);
+                                <div class="leader-item @(isCurrentUser ? "leader-current" : "") @(player.Rank <= 5 ? $"leader-top-{player.Rank}" : string.Empty)">
+                                    <div class="leader-rank rank-@(Math.Min(player.Rank, 3))">@player.Rank</div>
+                                    <div class="leader-avatar">@player.UserName[0]</div>
+                                    <div class="leader-info">
+                                        <div class="leader-name">@player.UserName @(isCurrentUser ? "(You)" : "")</div>
+                                        <div class="leader-chips">@FormatChips(player.Chips)</div>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(decoration))
+                                    {
+                                        <div class="leader-medal">@decoration</div>
+                                    }
+                                </div>
+                            }
+
+                            @if (leaderboardEntries.Count > 5)
+                            {
+                                <button class="leaderboard-toggle" @onclick="ToggleLeaderboardExpanded">
+                                    @(showFullLeaderboard ? "Show Top 5" : $"Show All Players ({leaderboardEntries.Count})")
+                                </button>
+                            }
+                        }
                     </div>
                 </section>
             </div>
@@ -413,6 +443,8 @@
     private bool showUserMenu;
     private PeriodicTimer? heartbeatTimer;
     private CancellationTokenSource? heartbeatCts;
+    private IReadOnlyList<LeaderboardEntryViewModel> leaderboardEntries = Array.Empty<LeaderboardEntryViewModel>();
+    private bool showFullLeaderboard;
 
     private int rankProgress;
     private int winRate;
@@ -422,6 +454,8 @@
     private int blackjackTables;
     private int pokerOnline;
     private int pokerTables;
+    private IEnumerable<LeaderboardEntryViewModel> VisibleLeaderboardEntries =>
+        showFullLeaderboard ? leaderboardEntries : leaderboardEntries.Take(5);
 
     protected override async Task OnInitializedAsync()
     {
@@ -462,6 +496,7 @@
         }
 
         dashboard = await MultiplayerService.GetDashboardAsync(currentUserId);
+        leaderboardEntries = await LeaderboardService.GetLeaderboardAsync();
         if (dashboard is null)
         {
             return;
@@ -600,6 +635,8 @@
         statusIsError = isError;
     }
 
+    private void ToggleLeaderboardExpanded() => showFullLeaderboard = !showFullLeaderboard;
+
     private static int GetRankProgress(long chips)
     {
         if (chips < 5_000)
@@ -621,6 +658,24 @@
         if (chips >= 1_000) return $"${chips / 1_000.0:F1}K";
         return $"${chips}";
     }
+
+    private static string GetMedal(int position) => position switch
+    {
+        0 => "🥇",
+        1 => "🥈",
+        2 => "🥉",
+        _ => string.Empty
+    };
+
+    private static string GetLeaderboardDecoration(int rank) => rank switch
+    {
+        1 => "👑",
+        2 => "🥈",
+        3 => "🥉",
+        4 => "💎",
+        5 => "🔥",
+        _ => string.Empty
+    };
 
     private static string SignedChips(long chips) => chips >= 0 ? $"+{FormatChips(chips)}" : $"-{FormatChips(Math.Abs(chips))}";
 
