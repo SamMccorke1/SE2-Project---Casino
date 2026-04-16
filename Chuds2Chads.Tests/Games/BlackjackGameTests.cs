@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Chuds2Chads.Games.Blackjack;
 using Xunit;
@@ -9,7 +10,17 @@ namespace Chuds2Chads.Tests
         [Fact]
         public void StartNewRound_WithPlayers_DealsTwoCardsToEachPlayerAndDealer()
         {
-            var game = new PlayBlackjack("Test Lobby");
+            // Use a fixed deck so Alice and Bob are never dealt 21, preventing auto-advance
+            var deck = new FakeDeck(new[]
+            {
+                new Card { Rank = Rank.Five,  Suit = Suit.Hearts   }, // Alice card 1
+                new Card { Rank = Rank.Six,   Suit = Suit.Spades   }, // Alice card 2 (11)
+                new Card { Rank = Rank.Seven, Suit = Suit.Hearts   }, // Bob card 1
+                new Card { Rank = Rank.Eight, Suit = Suit.Spades   }, // Bob card 2 (15)
+                new Card { Rank = Rank.Nine,  Suit = Suit.Hearts   }, // Dealer card 1
+                new Card { Rank = Rank.Ten,   Suit = Suit.Spades   }, // Dealer card 2 (19)
+            });
+            var game = new PlayBlackjack("Test Lobby", deck);
             game.Players.Add(new Player { Name = "Alice" });
             game.Players.Add(new Player { Name = "Bob" });
 
@@ -170,4 +181,15 @@ namespace Chuds2Chads.Tests
             Assert.Equal(11, ace.Value);
         }
     }
+}
+
+internal class FakeDeck : IDeck
+{
+    private readonly Queue<Card> _cards;
+
+    public FakeDeck(IEnumerable<Card> cards) => _cards = new Queue<Card>(cards);
+
+    public void InitializeAndShuffle() { } // no-op: keeps the preset order intact
+
+    public Card DrawCard() => _cards.Dequeue();
 }

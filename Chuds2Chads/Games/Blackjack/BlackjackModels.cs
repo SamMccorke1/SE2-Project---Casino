@@ -37,7 +37,13 @@ namespace Chuds2Chads.Games.Blackjack
         public static string CardBackPath => "/PlayingCards/back_light.png";
     }
 
-    public class Deck
+    public interface IDeck
+    {
+        void InitializeAndShuffle();
+        Card DrawCard();
+    }
+
+    public class Deck : IDeck
     {
         private List<Card> _cards = new();
         private Random _random = new();

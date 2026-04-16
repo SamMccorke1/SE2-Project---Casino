@@ -9,7 +9,7 @@ namespace Chuds2Chads.Games.Blackjack
         public string LobbyName { get; set; }
         public GamePhase Phase { get; private set; } = GamePhase.WaitingForPlayers;
 
-        public Deck Deck { get; private set; } = new Deck();
+        public IDeck Deck { get; private set; }
         public Player Dealer { get; private set; } = new Player { Name = "Dealer", IsDealer = true };
         public List<Player> Players { get; set; } = new();
 
@@ -19,9 +19,10 @@ namespace Chuds2Chads.Games.Blackjack
 
         public Action? OnGameStateChanged;
 
-        public PlayBlackjack(string lobbyName)
+        public PlayBlackjack(string lobbyName, IDeck? deck = null)
         {
             LobbyName = lobbyName;
+            Deck = deck ?? new Deck();
         }
 
         public void StartNewRound()
