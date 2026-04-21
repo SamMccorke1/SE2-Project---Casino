@@ -597,7 +597,7 @@
     private void ViewStats()
     {
         showUserMenu = false;
-        SetStatus("Statistics is still being built.", false);
+        NavigationManager.NavigateTo("/player-stats");
     }
 
     private async Task HandleLogout()
