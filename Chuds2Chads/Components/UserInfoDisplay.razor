@@ -9,6 +9,7 @@
             <div class="user-logged-in">
                 <span class="username-display">Welcome, @context.User.Identity?.Name</span>
                 <button class="btn btn-profile" @onclick="HandleProfile">Profile</button>
+                <button class="btn btn-shop" @onclick="HandleShop">Shop</button>
                 <button class="btn btn-logout" @onclick="HandleLogout">Logout</button>
             </div>
         </Authorized>
@@ -87,6 +88,17 @@
     border-color: rgba(96, 165, 250, 0.8);
 }
 
+.btn-shop {
+    background: rgba(255, 215, 0, 0.18);
+    color: #ffd700;
+    border: 2px solid rgba(255, 215, 0, 0.45);
+}
+
+.btn-shop:hover {
+    background: rgba(255, 215, 0, 0.28);
+    border-color: rgba(255, 215, 0, 0.8);
+}
+
 .btn-logout {
     background: rgba(239, 68, 68, 0.2);
     color: #ef4444;
@@ -120,6 +132,11 @@
     private void HandleProfile()
     {
         Navigation.NavigateTo("/profile");
+    }
+
+    private void HandleShop()
+    {
+        Navigation.NavigateTo("/shop");
     }
 
     private async Task HandleLogout()

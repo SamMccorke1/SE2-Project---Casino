@@ -107,6 +107,7 @@
 
                 <div class="profile-actions">
                     <button class="btn-customize" @onclick="GoToCustomization">Customize Character</button>
+                    <button class="btn-shop" @onclick="GoToShop">Cosmetic Shop</button>
                     <button class="btn-logout" @onclick="HandleLogout">Logout</button>
                 </div>
             </div>
@@ -460,6 +461,27 @@
     box-shadow: 0 8px 20px rgba(0, 255, 65, 0.4);
 }
 
+.btn-shop {
+    padding: 0.8rem 2rem;
+    background: rgba(255, 215, 0, 0.16);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-shop:hover {
+    background: rgba(255, 215, 0, 0.24);
+    border-color: rgba(255, 215, 0, 0.8);
+    transform: translateY(-2px);
+}
+
 .btn-logout {
     padding: 0.8rem 2rem;
     background: transparent;
@@ -605,6 +627,11 @@
     private void GoToCustomization()
     {
         Navigation.NavigateTo("/customize");
+    }
+
+    private void GoToShop()
+    {
+        Navigation.NavigateTo("/shop");
     }
 
     private async Task HandleLogout()

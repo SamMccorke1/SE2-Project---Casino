@@ -53,13 +53,40 @@ var app = builder.Build();
 await using (var scope = app.Services.CreateAsyncScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var walletService = scope.ServiceProvider.GetRequiredService<WalletService>();
     var avatarService = scope.ServiceProvider.GetRequiredService<AvatarService>();
     var multiplayerService = scope.ServiceProvider.GetRequiredService<MultiplayerService>();
 
     await db.Database.MigrateAsync();
     await SeedData.InitializeAsync(scope.ServiceProvider);
+    await EnsureTestUserTopUpAsync(userManager, walletService);
     await avatarService.EnsureCatalogSeededAsync();
     await multiplayerService.BackfillMissingFriendCodesAsync();
+}
+
+static async Task EnsureTestUserTopUpAsync(
+    UserManager<ApplicationUser> userManager,
+    WalletService walletService)
+{
+    const long targetBalance = 1_000_000;
+
+    var litzUser = await userManager.FindByNameAsync("litz");
+    if (litzUser is null)
+    {
+        return;
+    }
+
+    var currentBalance = await walletService.GetBalanceAsync(litzUser.Id) ?? 0;
+    if (currentBalance >= targetBalance)
+    {
+        return;
+    }
+
+    await walletService.AdjustBalanceAsync(
+        litzUser.Id,
+        targetBalance - currentBalance,
+        "dev-topup-litz");
 }
 
 if (!app.Environment.IsDevelopment())

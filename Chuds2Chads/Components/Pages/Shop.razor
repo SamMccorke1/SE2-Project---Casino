@@ -1,31 +1,30 @@
-@page "/customize"
+@page "/shop"
 @using System.Security.Claims
 @using Chuds2Chads.Data.Entities
 @using Chuds2Chads.Services
-@using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
 @rendermode InteractiveServer
-@inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject AvatarService AvatarService
 @attribute [Authorize]
 
-<PageTitle>Customize Character - Chuds to Chads Casino</PageTitle>
+<PageTitle>Cosmetic Shop - Chuds to Chads Casino</PageTitle>
 
-<div class="customize-page">
+<div class="shop-page">
     <div class="bg-grid"></div>
     <div class="bg-glow bg-glow-1"></div>
     <div class="bg-glow bg-glow-2"></div>
 
-    <div class="customize-container">
-        <div class="customize-header">
+    <div class="shop-container">
+        <div class="shop-header-main">
             <NavLink href="/profile" class="back-link">← Back to Profile</NavLink>
-            <h1>Character Customization</h1>
+            <h1>Cosmetic Shop</h1>
         </div>
 
         @if (isLoading)
         {
-            <div class="alert alert-loading">Loading customization inventory...</div>
+            <div class="alert alert-loading">Loading shop inventory...</div>
         }
         else
         {
@@ -34,67 +33,64 @@
                 <div class="alert @(hasErrorMessage ? "alert-error" : "alert-success")">@message</div>
             }
 
-            <div class="avatar-preview-card">
-                <h2>Current Loadout</h2>
-                <div class="preview-grid">
+            <div class="shop-summary-card">
+                <h2>Available Cosmetics</h2>
+                <div class="shop-balance">Chips: @FormatChips(walletBalance)</div>
+            </div>
+
+            @if (shopBySlot.Count == 0)
+            {
+                <div class="empty-slot">No purchasable cosmetics are available right now.</div>
+            }
+            else
+            {
+                <div class="inventory-grid">
                     @foreach (var slot in OrderedSlots)
                     {
-                        <div class="preview-item">
-                            <span class="preview-label">@slot</span>
-                            <img class="preview-image" src="@GetEquippedImagePath(slot)" alt="@($"{slot} cosmetic")" />
-                            <span class="preview-value">@GetEquippedLabel(slot)</span>
-                        </div>
+                        <section class="slot-panel">
+                            <div class="slot-header">
+                                <h3>@slot Shop</h3>
+                                <span class="slot-count">@GetShopCount(slot) for sale</span>
+                            </div>
+
+                            @if (shopBySlot.TryGetValue(slot, out var shopItems) && shopItems.Count > 0)
+                            {
+                                @foreach (var item in shopItems)
+                                {
+                                    <article class="cosmetic-item @(item.IsOwned ? "owned" : "")">
+                                        <img class="cosmetic-image" src="@item.ImagePath" alt="@item.Name" />
+                                        <div class="cosmetic-top-row">
+                                            <strong>@item.Name</strong>
+                                            <span class="rarity">@item.Rarity</span>
+                                        </div>
+                                        <div class="meta">Asset: @item.AssetKey</div>
+                                        <div class="shop-price">Price: @FormatChips(item.Price)</div>
+
+                                        @if (item.IsOwned)
+                                        {
+                                            <button class="shop-button shop-button--owned" disabled>Owned</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="shop-button" @onclick="() => PurchaseAsync(item.CosmeticDefinitionId)">Buy</button>
+                                        }
+                                    </article>
+                                }
+                            }
+                            else
+                            {
+                                <div class="empty-slot">No items in this slot shop.</div>
+                            }
+                        </section>
                     }
                 </div>
-            </div>
-
-            <div class="inventory-grid">
-                @foreach (var slot in OrderedSlots)
-                {
-                    <section class="slot-panel">
-                        <div class="slot-header">
-                            <h3>@slot</h3>
-                            <span class="slot-count">@GetCount(slot) owned</span>
-                        </div>
-
-                        @if (inventoryBySlot.TryGetValue(slot, out var items) && items.Count > 0)
-                        {
-                            @foreach (var item in items)
-                            {
-                                <article class="cosmetic-item @(item.IsEquipped ? "equipped" : "")">
-                                    <img class="cosmetic-image" src="@item.ImagePath" alt="@item.Name" />
-                                    <div class="cosmetic-top-row">
-                                        <strong>@item.Name</strong>
-                                        <span class="rarity">@item.Rarity</span>
-                                    </div>
-                                    <div class="meta">Asset: @item.AssetKey</div>
-                                    <div class="meta">Object ID: @item.ObjectId</div>
-                                    <div class="meta">Earned: @item.EarnedUtc.ToLocalTime().ToString("g")</div>
-                                    @if (item.IsEquipped)
-                                    {
-                                        <button class="equip-button equip-button--equipped" disabled>Equipped</button>
-                                        <button class="unequip-button" @onclick="() => UnequipAsync(item.Slot)">Unequip</button>
-                                    }
-                                    else
-                                    {
-                                        <button class="equip-button" @onclick="() => EquipAsync(item.ObjectId)">Equip</button>
-                                    }
-                                </article>
-                            }
-                        }
-                        else
-                        {
-                            <div class="empty-slot">No items in this slot yet.</div>
-                        }
-                    </section>
-                }
-            </div>
+            }
         }
     </div>
 </div>
 
 <style>
-.customize-page {
+.shop-page {
     min-height: 100vh;
     background: linear-gradient(135deg, #0a0118 0%, #1a0933 100%);
     color: white;
@@ -148,7 +144,7 @@
     50%       { transform: translate(30px, -30px) scale(1.1); }
 }
 
-.customize-container {
+.shop-container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 3rem 3%;
@@ -161,11 +157,11 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.customize-header {
-    margin-bottom: 2.5rem;
+.shop-header-main {
+    margin-bottom: 2rem;
 }
 
-.customize-header h1 {
+.shop-header-main h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(2.5rem, 5vw, 4rem);
     letter-spacing: 2px;
@@ -192,68 +188,30 @@
     transform: translateX(-4px);
 }
 
-.avatar-preview-card {
+.shop-summary-card {
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(0, 255, 65, 0.2);
+    border: 1px solid rgba(255, 215, 0, 0.2);
     border-radius: 20px;
     padding: 2rem;
     margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
 }
 
-.avatar-preview-card h2 {
+.shop-summary-card h2 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.6rem;
     letter-spacing: 1px;
     color: rgba(255, 255, 255, 0.85);
-    margin: 0 0 1.25rem;
+    margin: 0;
 }
 
-.preview-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.preview-item {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    transition: border-color 0.3s ease;
-}
-
-.preview-item:hover {
-    border-color: rgba(0, 255, 65, 0.25);
-}
-
-.preview-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.preview-value {
+.shop-balance {
+    color: #ffd700;
     font-family: 'Russo One', sans-serif;
-    color: #00ff41;
-    font-size: 0.85rem;
-}
-
-.preview-image {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    min-height: 110px;
-    max-height: 150px;
-    object-fit: contain;
-    border-radius: 8px;
-    padding: 10px;
-    background:
-        linear-gradient(135deg, rgba(10, 1, 24, 0.95), rgba(2, 6, 23, 0.95)),
-        repeating-conic-gradient(from 45deg, rgba(0, 255, 65, 0.05) 0 25%, transparent 0 50%) 50% / 14px 14px;
-    border: 1px solid rgba(0, 255, 65, 0.15);
+    font-size: 0.9rem;
 }
 
 .inventory-grid {
@@ -310,6 +268,11 @@
     border-color: rgba(0, 255, 65, 0.2);
 }
 
+.cosmetic-item.owned {
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.1);
+}
+
 .cosmetic-image {
     width: 100%;
     aspect-ratio: 1 / 1;
@@ -323,15 +286,6 @@
         linear-gradient(135deg, rgba(10, 1, 24, 0.98), rgba(2, 6, 23, 0.98)),
         repeating-conic-gradient(from 45deg, rgba(0, 255, 65, 0.05) 0 25%, transparent 0 50%) 50% / 16px 16px;
     border: 1px solid rgba(0, 255, 65, 0.12);
-}
-
-.cosmetic-item.equipped {
-    border-color: rgba(0, 255, 65, 0.6);
-    box-shadow: 0 0 16px rgba(0, 255, 65, 0.12);
-}
-
-.cosmetic-item.equipped .cosmetic-image {
-    border-color: rgba(0, 255, 65, 0.3);
 }
 
 .cosmetic-top-row {
@@ -361,7 +315,14 @@
     word-break: break-word;
 }
 
-.equip-button {
+.shop-price {
+    color: rgba(255, 215, 0, 0.9);
+    font-family: 'Russo One', sans-serif;
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+}
+
+.shop-button {
     margin-top: 0.6rem;
     border: none;
     border-radius: 8px;
@@ -377,37 +338,16 @@
     transition: all 0.2s ease;
 }
 
-.equip-button:hover:not(:disabled) {
+.shop-button:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 6px 16px rgba(0, 255, 65, 0.35);
 }
 
-.equip-button--equipped {
-    background: rgba(0, 255, 65, 0.12);
-    color: rgba(0, 255, 65, 0.7);
+.shop-button--owned {
+    background: rgba(255, 215, 0, 0.12);
+    color: rgba(255, 215, 0, 0.85);
     cursor: default;
-    border: 1px solid rgba(0, 255, 65, 0.25);
-}
-
-.unequip-button {
-    margin-top: 0.4rem;
-    margin-left: 0.4rem;
-    border: 1px solid rgba(255, 46, 99, 0.4);
-    border-radius: 8px;
-    padding: 0.55rem 1rem;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    background: transparent;
-    color: #ff2e63;
-    transition: all 0.2s ease;
-}
-
-.unequip-button:hover {
-    background: rgba(255, 46, 99, 0.1);
-    border-color: #ff2e63;
-    transform: translateY(-1px);
+    border: 1px solid rgba(255, 215, 0, 0.35);
 }
 
 .empty-slot {
@@ -421,6 +361,7 @@
     padding: 1rem 1.5rem;
     border-radius: 10px;
     text-align: center;
+    margin-bottom: 1rem;
 }
 
 .alert-loading {
@@ -439,7 +380,6 @@
     background: rgba(0, 255, 65, 0.08);
     color: #9dffbf;
     border: 1px solid rgba(0, 255, 65, 0.35);
-    margin-bottom: 1rem;
 }
 
 @@media (max-width: 900px) {
@@ -447,8 +387,9 @@
         grid-template-columns: 1fr;
     }
 
-    .preview-grid {
-        grid-template-columns: 1fr;
+    .shop-summary-card {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 </style>
@@ -465,11 +406,11 @@
     ];
 
     private bool isLoading = true;
-    private string message = string.Empty;
     private bool hasErrorMessage;
+    private string message = string.Empty;
     private Guid userId;
-    private Dictionary<AvatarSlot, List<OwnedCosmeticDto>> inventoryBySlot = new();
-    private Dictionary<AvatarSlot, Guid?> equippedBySlot = new();
+    private long walletBalance;
+    private Dictionary<AvatarSlot, List<ShopCosmeticDto>> shopBySlot = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -494,21 +435,19 @@
             var data = await AvatarService.GetCustomizationDataAsync(userId);
             if (data is null)
             {
-                message = "Avatar data is unavailable.";
+                message = "Shop data is unavailable.";
                 hasErrorMessage = true;
                 return;
             }
 
-            message = string.Empty;
-            hasErrorMessage = false;
-            equippedBySlot = data.EquippedObjectIds;
-            inventoryBySlot = data.OwnedCosmetics
+            walletBalance = data.WalletBalance ?? 0;
+            shopBySlot = data.ShopCosmetics
                 .GroupBy(i => i.Slot)
                 .ToDictionary(g => g.Key, g => g.ToList());
         }
         catch (Exception ex)
         {
-            message = $"Error loading customization: {ex.Message}";
+            message = $"Error loading shop: {ex.Message}";
             hasErrorMessage = true;
         }
         finally
@@ -517,64 +456,22 @@
         }
     }
 
-    private int GetCount(AvatarSlot slot)
+    private async Task PurchaseAsync(Guid cosmeticDefinitionId)
     {
-        return inventoryBySlot.TryGetValue(slot, out var items) ? items.Count : 0;
+        var result = await AvatarService.PurchaseCosmeticAsync(userId, cosmeticDefinitionId);
+        message = result.Message;
+        hasErrorMessage = !result.Success;
+
+        if (result.Success)
+        {
+            await LoadAsync();
+        }
     }
 
-    private string GetEquippedLabel(AvatarSlot slot)
+    private int GetShopCount(AvatarSlot slot)
     {
-        if (!equippedBySlot.TryGetValue(slot, out var equippedObjectId) || equippedObjectId is null)
-        {
-            return "None";
-        }
-
-        if (!inventoryBySlot.TryGetValue(slot, out var items))
-        {
-            return "None";
-        }
-
-        var equippedItem = items.FirstOrDefault(i => i.ObjectId == equippedObjectId.Value);
-        return equippedItem?.Name ?? "None";
+        return shopBySlot.TryGetValue(slot, out var items) ? items.Count : 0;
     }
 
-    private string GetEquippedImagePath(AvatarSlot slot)
-    {
-        if (!equippedBySlot.TryGetValue(slot, out var equippedObjectId) || equippedObjectId is null)
-        {
-            return "/images/C2C-Logo-Transparent.png";
-        }
-
-        if (!inventoryBySlot.TryGetValue(slot, out var items))
-        {
-            return "/images/C2C-Logo-Transparent.png";
-        }
-
-        var equippedItem = items.FirstOrDefault(i => i.ObjectId == equippedObjectId.Value);
-        return equippedItem?.ImagePath ?? "/images/C2C-Logo-Transparent.png";
-    }
-
-    private async Task EquipAsync(Guid objectId)
-    {
-        var ok = await AvatarService.EquipAsync(userId, objectId);
-        if (!ok)
-        {
-            message = "Failed to equip item.";
-            hasErrorMessage = true;
-            return;
-        }
-        await LoadAsync();
-    }
-
-    private async Task UnequipAsync(AvatarSlot slot)
-    {
-        var ok = await AvatarService.UnequipAsync(userId, slot);
-        if (!ok)
-        {
-            message = "Failed to unequip item.";
-            hasErrorMessage = true;
-            return;
-        }
-        await LoadAsync();
-    }
+    private static string FormatChips(long value) => value.ToString("N0");
 }

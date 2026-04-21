@@ -9,6 +9,14 @@ public class AvatarService
 {
     private readonly AppDbContext _db;
     private readonly IWebHostEnvironment _environment;
+    private static readonly Dictionary<string, long> RarityPriceMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Common"] = 200,
+        ["Uncommon"] = 400,
+        ["Rare"] = 750,
+        ["Epic"] = 1_200,
+        ["Legendary"] = 2_000
+    };
 
     public AvatarService(AppDbContext db, IWebHostEnvironment environment)
     {
@@ -157,6 +165,23 @@ public class AvatarService
             .ThenBy(i => i.EarnedUtc)
             .ToListAsync();
 
+        var ownedDefinitionIds = inventoryItems
+            .Select(i => i.CosmeticDefinitionId)
+            .ToHashSet();
+
+        var shopDefinitions = await _db.CosmeticDefinitions
+            .AsNoTracking()
+            .Where(c => !c.IsDefault)
+            .OrderBy(c => c.Slot)
+            .ThenBy(c => c.Name)
+            .ToListAsync();
+
+        var walletBalance = await _db.Wallets
+            .AsNoTracking()
+            .Where(w => w.UserId == userId)
+            .Select(w => (long?)w.Balance)
+            .FirstOrDefaultAsync();
+
         var inventory = inventoryItems.Select(i => new OwnedCosmeticDto
         {
             ObjectId = i.ObjectId,
@@ -186,8 +211,90 @@ public class AvatarService
                 [AvatarSlot.Legs] = loadout.LegsObjectId,
                 [AvatarSlot.Shoe] = loadout.ShoeObjectId
             },
-            OwnedCosmetics = inventory
+            OwnedCosmetics = inventory,
+            ShopCosmetics = shopDefinitions.Select(d => new ShopCosmeticDto
+            {
+                CosmeticDefinitionId = d.Id,
+                Slot = d.Slot,
+                Name = d.Name,
+                AssetKey = d.AssetKey,
+                ImagePath = ResolveCosmeticImagePath(d.AssetKey),
+                Rarity = d.Rarity,
+                Price = GetPriceForRarity(d.Rarity),
+                IsOwned = ownedDefinitionIds.Contains(d.Id)
+            }).ToList(),
+            WalletBalance = walletBalance
         };
+    }
+
+    public async Task<AvatarShopPurchaseResult> PurchaseCosmeticAsync(Guid userId, Guid cosmeticDefinitionId)
+    {
+        await EnsureUserAvatarInitializedAsync(userId);
+
+        var definition = await _db.CosmeticDefinitions
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == cosmeticDefinitionId);
+
+        if (definition is null)
+        {
+            return AvatarShopPurchaseResult.Fail("Cosmetic item was not found.");
+        }
+
+        if (definition.IsDefault)
+        {
+            return AvatarShopPurchaseResult.Fail("Default cosmetics are already unlocked.");
+        }
+
+        var alreadyOwned = await _db.UserCosmeticItems
+            .AsNoTracking()
+            .AnyAsync(i => i.UserId == userId && i.CosmeticDefinitionId == cosmeticDefinitionId);
+
+        if (alreadyOwned)
+        {
+            return AvatarShopPurchaseResult.Fail("You already own this cosmetic.");
+        }
+
+        var cost = GetPriceForRarity(definition.Rarity);
+        var wallet = await _db.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+
+        if (wallet is null)
+        {
+            return AvatarShopPurchaseResult.Fail("Wallet not found for this user.");
+        }
+
+        if (wallet.Balance < cost)
+        {
+            return AvatarShopPurchaseResult.Fail("Not enough chips to purchase this cosmetic.");
+        }
+
+        var now = DateTime.UtcNow;
+
+        await using var tx = await _db.Database.BeginTransactionAsync();
+
+        wallet.Balance -= cost;
+        wallet.UpdatedUtc = now;
+
+        _db.Transactions.Add(new Transaction
+        {
+            UserId = userId,
+            Type = TransactionType.Adjustment,
+            Amount = -cost,
+            BalanceAfter = wallet.Balance,
+            Reference = $"cosmetic-purchase:{definition.AssetKey}",
+            CreatedUtc = now
+        });
+
+        _db.UserCosmeticItems.Add(new UserCosmeticItem
+        {
+            UserId = userId,
+            CosmeticDefinitionId = definition.Id,
+            EarnedUtc = now
+        });
+
+        await _db.SaveChangesAsync();
+        await tx.CommitAsync();
+
+        return AvatarShopPurchaseResult.Ok(wallet.Balance);
     }
 
     public async Task<bool> EquipAsync(Guid userId, Guid objectId)
@@ -285,6 +392,7 @@ public class AvatarService
     [
         new() { Slot = AvatarSlot.Head,  Name = "Lucky Cap",        AssetKey = "head.base.cap",       Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Head,  Name = "Dealer Top Hat",    AssetKey = "head.dealer.top-hat", Rarity = "Rare",      IsDefault = true  },
+        new() { Slot = AvatarSlot.Head,  Name = "Neon Fringe",       AssetKey = "head.neon.fringe",    Rarity = "Epic",      IsDefault = false },
         new() { Slot = AvatarSlot.Face,  Name = "Face 1",            AssetKey = "face.base.smile",     Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Face,  Name = "Face 2",            AssetKey = "face.f2",             Rarity = "Uncommon",  IsDefault = false },
         new() { Slot = AvatarSlot.Face,  Name = "Face 3",            AssetKey = "face.f3",             Rarity = "Uncommon",  IsDefault = false },
@@ -297,8 +405,12 @@ public class AvatarService
         new() { Slot = AvatarSlot.Body,  Name = "Skin Tone 6",       AssetKey = "body.skin.tone-6",    Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Torso, Name = "Starter Jacket",    AssetKey = "torso.base.jacket",   Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Torso, Name = "Royal Blazer",      AssetKey = "torso.royal.blazer",  Rarity = "Epic",      IsDefault = true  },
+        new() { Slot = AvatarSlot.Torso, Name = "Night Hoodie",      AssetKey = "torso.night.hoodie",  Rarity = "Rare",      IsDefault = false },
+        new() { Slot = AvatarSlot.Torso, Name = "Dealer Shirt",      AssetKey = "torso.dealer.shirt",  Rarity = "Uncommon",  IsDefault = false },
         new() { Slot = AvatarSlot.Legs,  Name = "Denim Pants",       AssetKey = "legs.base.denim",     Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Legs,  Name = "Velvet Trousers",   AssetKey = "legs.velvet.trousers",Rarity = "Rare",      IsDefault = true  },
+        new() { Slot = AvatarSlot.Legs,  Name = "Racer Shorts",      AssetKey = "legs.racer.shorts",   Rarity = "Uncommon",  IsDefault = false },
+        new() { Slot = AvatarSlot.Legs,  Name = "Royal Skirt",       AssetKey = "legs.royal.skirt",    Rarity = "Rare",      IsDefault = false },
         new() { Slot = AvatarSlot.Shoe,  Name = "Casino Sneakers",   AssetKey = "shoe.base.sneaker",   Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Shoe,  Name = "Golden Loafers",    AssetKey = "shoe.gold.loafer",    Rarity = "Epic",      IsDefault = true  },
         // Pet slot — entries added when real pet assets are available.
@@ -313,6 +425,7 @@ public class AvatarService
         {
             ["head.base.cap"]       = "Avatar/avatarhairs/hair1.png",
             ["head.dealer.top-hat"] = "Avatar/avatarhairs/hair2.png",
+            ["head.neon.fringe"]    = "Avatar/avatarhairs/hair3.png",
             ["face.base.smile"]     = "Avatar/avatarfaces/f1.png",
             ["face.f2"]             = "Avatar/avatarfaces/f2.png",
             ["face.f3"]             = "Avatar/avatarfaces/f3.png",
@@ -325,8 +438,12 @@ public class AvatarService
             ["body.skin.tone-6"]    = "Avatar/avatarbodies/body6.png",
             ["torso.base.jacket"]   = "Avatar/avatartops/shirt1.png",
             ["torso.royal.blazer"]  = "Avatar/avatartops/shirt3.png",
+            ["torso.night.hoodie"]  = "Avatar/avatartops/hoodie1.png",
+            ["torso.dealer.shirt"]  = "Avatar/avatartops/shirt2.png",
             ["legs.base.denim"]     = "Avatar/avatarbottoms/shorts1.png",
             ["legs.velvet.trousers"]= "Avatar/avatarbottoms/skirt2.png",
+            ["legs.racer.shorts"]   = "Avatar/avatarbottoms/shorts2.png",
+            ["legs.royal.skirt"]    = "Avatar/avatarbottoms/skirt1.png",
             ["shoe.base.sneaker"]   = "Avatar/avatarshoes/shoes1.png",
             ["shoe.gold.loafer"]    = "Avatar/avatarshoes/shoes2.png"
         };
@@ -376,12 +493,24 @@ public class AvatarService
 
         return "/images/C2C-Logo-Transparent.png";
     }
+
+    private static long GetPriceForRarity(string rarity)
+    {
+        if (RarityPriceMap.TryGetValue(rarity, out var price))
+        {
+            return price;
+        }
+
+        return RarityPriceMap["Common"];
+    }
 }
 
 public class AvatarCustomizationData
 {
     public Dictionary<AvatarSlot, Guid?> EquippedObjectIds { get; set; } = new();
     public List<OwnedCosmeticDto> OwnedCosmetics { get; set; } = new();
+    public List<ShopCosmeticDto> ShopCosmetics { get; set; } = new();
+    public long? WalletBalance { get; set; }
 }
 
 public class OwnedCosmeticDto
@@ -394,4 +523,36 @@ public class OwnedCosmeticDto
     public string Rarity { get; set; } = string.Empty;
     public DateTime EarnedUtc { get; set; }
     public bool IsEquipped { get; set; }
+}
+
+public class ShopCosmeticDto
+{
+    public Guid CosmeticDefinitionId { get; set; }
+    public AvatarSlot Slot { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string AssetKey { get; set; } = string.Empty;
+    public string ImagePath { get; set; } = string.Empty;
+    public string Rarity { get; set; } = string.Empty;
+    public long Price { get; set; }
+    public bool IsOwned { get; set; }
+}
+
+public class AvatarShopPurchaseResult
+{
+    public bool Success { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public long? BalanceAfter { get; set; }
+
+    public static AvatarShopPurchaseResult Ok(long balanceAfter) => new()
+    {
+        Success = true,
+        Message = "Purchase completed.",
+        BalanceAfter = balanceAfter
+    };
+
+    public static AvatarShopPurchaseResult Fail(string message) => new()
+    {
+        Success = false,
+        Message = message
+    };
 }
