@@ -185,16 +185,42 @@
                         </div>
                     </div>
 
-                    <div class="game-card-lobby coming-soon-card">
+                    <div class="game-card-lobby slots-card" @onclick='() => NavigationManager.NavigateTo("/slots/slots")'>
                         <div class="game-card-bg"></div>
                         <div class="game-card-content">
                             <div class="game-icon">🎰</div>
-                            <h3 class="game-name">Coming Soon</h3>
-                            <p class="game-desc">More games in development.</p>
+                            <h3 class="game-name">Slots</h3>
+                            <p class="game-desc">Spin to win big.</p>
                             <div class="game-stats-row">
-                                <div class="game-stat">Roulette, Slots & More</div>
+                                <div class="game-stat">Solo play</div>
                             </div>
-                            <button class="btn-play" disabled>Coming Soon</button>
+                            <button class="btn-play">Play Now</button>
+                        </div>
+                    </div>
+
+                    <div class="game-card-lobby roulette-card" @onclick='() => NavigationManager.NavigateTo("/roulette/roulette")'>
+                        <div class="game-card-bg"></div>
+                        <div class="game-card-content">
+                            <div class="game-icon">🎡</div>
+                            <h3 class="game-name">Roulette</h3>
+                            <p class="game-desc">Bet on red, black, or your lucky number.</p>
+                            <div class="game-stats-row">
+                                <div class="game-stat">Solo play</div>
+                            </div>
+                            <button class="btn-play">Play Now</button>
+                        </div>
+                    </div>
+
+                    <div class="game-card-lobby horses-card" @onclick='() => NavigationManager.NavigateTo("/HorseRacing/horserace")'>
+                        <div class="game-card-bg"></div>
+                        <div class="game-card-content">
+                            <div class="game-icon">🐎</div>
+                            <h3 class="game-name">Horse Racing</h3>
+                            <p class="game-desc">Pick your horse and ride to glory.</p>
+                            <div class="game-stats-row">
+                                <div class="game-stat">Solo play</div>
+                            </div>
+                            <button class="btn-play">Play Now</button>
                         </div>
                     </div>
                 </div>

@@ -413,7 +413,9 @@
 
 .blackjack-card .game-card-bg { background: linear-gradient(135deg, rgba(255, 46, 99, 0.2), rgba(26, 9, 51, 0.8)); }
 .poker-card .game-card-bg { background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(26, 9, 51, 0.8)); }
-.coming-soon-card .game-card-bg { background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(26, 9, 51, 0.8)); }
+.slots-card .game-card-bg { background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(26, 9, 51, 0.8)); }
+.roulette-card .game-card-bg { background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), rgba(26, 9, 51, 0.8)); }
+.horses-card .game-card-bg { background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(26, 9, 51, 0.8)); }
 
 .game-card-lobby:hover {
     transform: scale(1.05);
