@@ -1,0 +1,257 @@
+.player-stats-page {
+    position: relative;
+    min-height: 100vh;
+    padding: 2rem 1.25rem 3rem;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top left, rgba(255, 215, 0, 0.08), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(0, 255, 200, 0.06), transparent 25%),
+        linear-gradient(180deg, #08111f 0%, #0d1626 45%, #0b1220 100%);
+    color: #f4f7fb;
+}
+
+.stats-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.18;
+    pointer-events: none;
+}
+
+.stats-bg-glow {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+.stats-bg-glow-1 {
+    top: -100px;
+    left: -80px;
+    background: #00d9ff;
+}
+
+.stats-bg-glow-2 {
+    bottom: -120px;
+    right: -80px;
+    background: #ffd54a;
+}
+
+.stats-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.stats-header-card,
+.breakdown-card,
+.stats-message-card,
+.stat-card {
+    background: rgba(13, 22, 38, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+}
+
+.stats-header-card {
+    border-radius: 22px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.stats-title {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+}
+
+.stats-subtitle {
+    margin: 0.5rem 0 0;
+    color: #9fb1c9;
+    font-size: 1rem;
+}
+
+.stats-overview-grid {
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) );
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    border-radius: 20px;
+    padding: 1.15rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 213, 74, 0.35);
+    box-shadow:
+        0 18px 36px rgba(0, 0, 0, 0.38),
+        0 0 0 1px rgba(255, 213, 74, 0.08);
+}
+
+.stat-card.featured {
+    background:
+        linear-gradient(135deg, rgba(255, 213, 74, 0.16), rgba(13, 22, 38, 0.88)),
+        rgba(13, 22, 38, 0.82);
+    border-color: rgba(255, 213, 74, 0.22);
+}
+
+.stat-card.money {
+    border-left: 3px solid rgba(255, 213, 74, 0.55);
+}
+
+.stat-label {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #91a5c2;
+    font-weight: 700;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.15;
+    word-break: break-word;
+}
+
+.positive {
+    color: #4ee08b;
+}
+
+.negative {
+    color: #ff6b7d;
+}
+
+.breakdown-card {
+    border-radius: 24px;
+    padding: 1.25rem;
+}
+
+.breakdown-header {
+    margin-bottom: 1rem;
+}
+
+.breakdown-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.breakdown-header p {
+    margin: 0.35rem 0 0;
+    color: #9fb1c9;
+    font-size: 0.96rem;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 16px;
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 980px;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.stats-table thead th {
+    background: linear-gradient(180deg, rgba(255, 213, 74, 0.16), rgba(255, 213, 74, 0.08));
+    color: #fef3c7;
+    text-align: left;
+    padding: 0.95rem 0.9rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.stats-table tbody td {
+    padding: 0.95rem 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    color: #e7eef9;
+    font-size: 0.95rem;
+    background: rgba(8, 15, 28, 0.55);
+}
+
+.stats-table tbody tr:nth-child(even) td {
+    background: rgba(12, 20, 34, 0.72);
+}
+
+.stats-table tbody tr:hover td {
+    background: rgba(255, 213, 74, 0.08);
+}
+
+.game-name {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.stats-message-card {
+    border-radius: 20px;
+    padding: 1rem 1.15rem;
+    margin-top: 1rem;
+}
+
+.stats-message-card.compact {
+    margin-top: 0;
+}
+
+.stats-message-card.error {
+    border-color: rgba(255, 107, 125, 0.35);
+    background: rgba(60, 10, 20, 0.72);
+}
+
+.stats-loading {
+    color: #dbe7f7;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .player-stats-page {
+        padding: 1.1rem 0.8rem 2rem;
+    }
+
+    .stats-header-card,
+    .breakdown-card,
+    .stats-message-card,
+    .stat-card {
+        border-radius: 18px;
+    }
+
+    .stats-title {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 1.25rem;
+    }
+
+    .breakdown-card {
+        padding: 1rem;
+    }
+}
