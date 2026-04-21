@@ -73,7 +73,7 @@ namespace Chuds2Chads.Services
                 .Where(t => t.Type.ToString() == "Payout")
                 .ToList();
 
-            long totalWagered = betTransactions.Sum(t => t.Amount);
+            long totalWagered = betTransactions.Sum(t => Math.Abs(t.Amount));
             long totalWon = payoutTransactions.Sum(t => t.Amount);
             long totalLost = Math.Max(0, totalWagered - totalWon);
             long netResult = totalWon - totalWagered;
@@ -96,8 +96,8 @@ namespace Chuds2Chads.Services
                 int losses = Math.Max(0, timesPlayed - wins);
 
                 long amountWagered = gameBets.Sum(t => t.Amount);
-                long amountWon = gamePayouts.Sum(t => t.Amount);
-                long amountLost = Math.Max(0, amountWagered - amountWon);
+long amountWon = gamePayouts.Sum(t => t.Amount);
+long amountLost = Math.Max(0, amountWagered - amountWon);
 
                 gameStats.Add(new GameStatisticsDto
                 {
