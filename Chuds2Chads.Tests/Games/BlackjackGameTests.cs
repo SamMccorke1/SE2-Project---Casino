@@ -50,19 +50,21 @@ namespace Chuds2Chads.Tests
         }
 
         [Fact]
-        public void PlayerHit_WrongPlayerName_DoesNothing()
-        {
-            var game = new PlayBlackjack("Test Lobby");
-            game.Players.Add(new Player { Name = "Alice" });
+public void PlayerHit_WrongPlayerName_DoesNothing()
+{
+    var game = new PlayBlackjack("Test Lobby");
+    game.Players.Add(new Player { Name = "Alice" });
 
-            game.StartNewRound();
-            int before = game.CurrentPlayer!.Hand.Count;
+    game.StartNewRound();
 
-            game.PlayerHit("Bob");
+    Assert.NotNull(game.CurrentPlayer);
+    int before = game.CurrentPlayer!.Hand.Count;
 
-            Assert.Equal(before, game.Players[0].Hand.Count);
-            Assert.Equal("Alice", game.CurrentPlayer?.Name);
-        }
+    game.PlayerHit("Bob");
+
+    Assert.Equal(before, game.Players[0].Hand.Count);
+    Assert.Equal("Alice", game.CurrentPlayer?.Name);
+}
 
         [Fact]
         public void PlayerStand_CurrentPlayer_MovesToNextPlayer()
