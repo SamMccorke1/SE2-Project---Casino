@@ -27,7 +27,6 @@ public class HorseRaceService
         new("Shadow Runner", "🏇", 1.00, 3.5),
         new("Golden Hoof",   "🐴", 0.95, 4.0),
         new("Wild Wind",     "🐎", 0.90, 5.0),
-        new("Iron Stallion", "🏇", 0.85, 6.5),
     };
 
     // Simulation
