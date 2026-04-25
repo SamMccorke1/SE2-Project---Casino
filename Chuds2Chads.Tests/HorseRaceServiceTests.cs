@@ -60,7 +60,7 @@ public class HorseRaceServiceTests
     {
         const long stake = 40;
 
-        var result = _service.SimulateRace(horseCount: 5, stake: stake);
+        var result = _service.SimulateRace(horseCount: 4, stake: stake);
 
         Assert.Equal((long)(stake * result.Winner.Odds), result.Payout);
     }
@@ -72,7 +72,7 @@ public class HorseRaceServiceTests
     [Fact]
     public void SimulateRace_ShowsDifferentHalfwayProgressForAtLeastOneHorse()
     {
-        var result = _service.SimulateRace(horseCount: 5, stake: 10);
+        var result = _service.SimulateRace(horseCount: 4, stake: 10);
 
         Assert.NotEmpty(result.Frames);
         Assert.True(result.Frames.Count > 2,
@@ -108,7 +108,7 @@ public class HorseRaceServiceTests
     [Fact]
     public void SimulateRace_ProducesBoundedMonotonicFramesUntilFinish()
     {
-        const int horseCount = 5;
+        const int horseCount = 4;
         var result = _service.SimulateRace(horseCount, stake: 10);
 
         Assert.InRange(result.Frames.Count, 1, 200);
