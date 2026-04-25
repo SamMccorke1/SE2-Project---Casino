@@ -47,20 +47,32 @@ public class HorseRaceService
             .OrderBy(_ => rng.NextDouble())
             .ToArray();
 
-        // Per-race speed: base * random multiplier in [0.75, 1.25]
-        double[] speeds = contestants
-            .Select(h => h.BaseSpeed * (0.75 + rng.NextDouble() * 0.50))
+        double[] winWeights = contestants
+            .Select(h => 1.0 / h.Odds)
             .ToArray();
 
-        double[] positions = new double[horseCount];
-        var frames = new List<RaceFrame>(120);
+        double totalWeight = winWeights.Sum();
+        double[] winChance = winWeights.Select(w => w / totalWeight).ToArray();
 
-        for (int tick = 0; tick < 200; tick++)
+        double[] speeds = contestants
+            .Select(_ => 0.5 + rng.NextDouble() * 0.5)
+            .ToArray();
+
+        // Normalize speeds so the fastest is 1.0, ensuring winner reaches 100
+        double maxSpeed = speeds.Max();
+        for (int i = 0; i < speeds.Length; i++) speeds[i] /= maxSpeed;
+
+        double[] positions = new double[horseCount];
+        var frames = new List<RaceFrame>(180);
+        int maxTicks = 180;
+        double timeStep = 100.0 / maxTicks;
+
+        for (int tick = 0; tick < maxTicks; tick++)
         {
             for (int i = 0; i < horseCount; i++)
             {
-                double surge = rng.NextDouble() * 0.8;
-                positions[i] = Math.Min(100.0, positions[i] + speeds[i] + surge);
+                positions[i] += speeds[i] * timeStep;
+                positions[i] = Math.Min(100.0, positions[i]);
             }
 
             frames.Add(new RaceFrame((double[])positions.Clone()));
@@ -68,8 +80,8 @@ public class HorseRaceService
         }
 
         int winnerIdx = Array.IndexOf(positions, positions.Max());
-        var winner    = contestants[winnerIdx];
-        long payout   = (long)(stake * winner.Odds);
+        var winner = contestants[winnerIdx];
+        long payout = (long)(stake * winner.Odds);
 
         return new RaceResult(winner, winnerIdx, payout, frames);
     }
