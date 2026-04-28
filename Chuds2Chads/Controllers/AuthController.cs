@@ -121,12 +121,16 @@ namespace Chuds2Chads.Controllers
             await _avatarService.EnsureUserAvatarInitializedAsync(user.Id);
             await _multiplayerService.SetPresenceAsync(user.Id, UserPresenceStatus.Online);
 
+            var roles = await _userManager.GetRolesAsync(user);
+            var isAdmin = roles.Contains("Admin");
+
             return Ok(new
             {
                 message = "Login successful!",
                 userId = user.Id,
                 userName = user.UserName,
-                email = user.Email
+                email = user.Email,
+                isAdmin
             });
         }
 
