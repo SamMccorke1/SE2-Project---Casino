@@ -198,8 +198,6 @@ C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\rpydzsv8mn-{0}-h1s4sie4z3-h1s4sie4z3.gz
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\cd74osybx6-{0}-4d85u1mtcx-4d85u1mtcx.gz
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\4rxnogzcxo-{0}-0j3bgjxly4-0j3bgjxly4.gz
-C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-mgww215af1-mgww215af1.gz
-C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\633hdj8dxo-{0}-dy8h75y8gn-dy8h75y8gn.gz
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.development.json
@@ -211,8 +209,6 @@ C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.pdb
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.genruntimeconfig.cache
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\ref\Chuds2Chads.dll
-C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-zzvs8qgmuw-zzvs8qgmuw.gz
-C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-zzvs8qgmuw-zzvs8qgmuw.gz
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\appsettings.Development.json
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\appsettings.json
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\bin\Debug\net10.0\Chuds2Chads.staticwebassets.runtime.json
@@ -426,6 +422,8 @@ C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debu
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.pdb
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\Chuds2Chads.genruntimeconfig.cache
 C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\ref\Chuds2Chads.dll
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Admin.razor.rz.scp.css
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-zlrs8ur4ou-zlrs8ur4ou.gz
-C:\Users\Wade\Documents\casino project\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-zlrs8ur4ou-zlrs8ur4ou.gz
+C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\PlayerStats.razor.rz.scp.css
+C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-qcnkhbt5lj-qcnkhbt5lj.gz
+C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\633hdj8dxo-{0}-12rnbzdyyc-12rnbzdyyc.gz
+C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-p2l3lggsic-p2l3lggsic.gz
+C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-p2l3lggsic-p2l3lggsic.gz
