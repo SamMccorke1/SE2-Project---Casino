@@ -625,8 +625,6 @@ C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\4rxnogzcxo-{0}-0j3bgjxly4-0j3bgjxly4.gz
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\z0af2ayrra-{0}-mgww215af1-mgww215af1.gz
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\633hdj8dxo-{0}-dy8h75y8gn-dy8h75y8gn.gz
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-0hftzho3b6-0hftzho3b6.gz
-C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-0hftzho3b6-0hftzho3b6.gz
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\staticwebassets.development.json
@@ -775,3 +773,7 @@ C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-p2l3lggsic-p2l3lggsic.gz
 C:\Users\2reod\Documents\Projects\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-p2l3lggsic-p2l3lggsic.gz
 >>>>>>> c8152849a5e7f2f101e34868d0a556924096e8f3
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\Admin.razor.rz.scp.css
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\scopedcss\Components\Pages\PlayerStats.razor.rz.scp.css
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\60p4bxnfmb-{0}-11m1m1dpjp-11m1m1dpjp.gz
+C:\Users\llitz\Documents\GitHub\SE2-Project---Casino\Chuds2Chads\obj\Debug\net10.0\compressed\d7ujse29ek-{0}-11m1m1dpjp-11m1m1dpjp.gz

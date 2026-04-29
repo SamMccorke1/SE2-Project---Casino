@@ -235,7 +235,7 @@
 .avatar-canvas {
     position: relative;
     width: 220px;
-    height: 320px;
+    height: 220px;
     margin: 0 auto;
     border-radius: 16px;
     overflow: hidden;
@@ -253,30 +253,11 @@
     transform-origin: center top;
 }
 
-.avatar-layer-body  {
-    z-index: 1;
-    width: 96%;
-    height: 96%;
-    top: 17%;
-    left: 2%;
-    right: unset;
-    bottom: unset;
-    object-fit: contain;
-    object-position: top left;
-}
+.avatar-layer-body  { z-index: 1; }
 .avatar-layer-legs  { z-index: 2; }
 .avatar-layer-shoe  { z-index: 3; }
 .avatar-layer-torso { z-index: 4; }
-.avatar-layer-face  {
-    z-index: 5;
-    width: 22%;
-    height: 22%;
-    top: 19%;
-    left: 40%;
-    right: unset;
-    bottom: unset;
-    object-fit: contain;
-}
+.avatar-layer-face  { z-index: 5; }
 .avatar-layer-head  { z-index: 6; }
 
 .avatar-name {
@@ -622,17 +603,7 @@
 
     private static readonly Dictionary<string, string> AssetLayerStyleOverrides = new(StringComparer.OrdinalIgnoreCase)
     {
-        // Normalize newer tightly-cropped exports so they match legacy padded assets.
-        ["head.street.sweep"] = "transform: translateY(-2%) scale(0.64);",
-        ["head.high-roller.curls"] = "transform: translateY(-2%) scale(0.64);",
-        ["head.lucky.layers"] = "transform: translateY(-2%) scale(0.64);",
-
-        ["torso.shadow.hood"] = "transform: translateY(4%) scale(0.80);",
-        ["torso.royal.hood"] = "transform: translateY(4%) scale(0.80);",
-        ["torso.midnight.hood"] = "transform: translateY(4%) scale(0.80);",
-
-        ["shoe.jet.runners"] = "transform: translateY(16%) scale(0.72);",
-        ["shoe.royal.high-tops"] = "transform: translateY(16%) scale(0.72);"
+        // All assets are normalized to 300×300 canvas with matched padding — no overrides needed.
     };
 
     private OwnedCosmeticDto? GetEquippedItem(AvatarSlot slot)
