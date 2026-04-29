@@ -39,10 +39,13 @@
                     <div class="avatar-canvas">
                         @foreach (var layer in AvatarLayers)
                         {
-                            var src = GetEquippedImagePath(layer);
-                            if (!string.IsNullOrEmpty(src))
+                            var item = GetEquippedItem(layer);
+                            if (item is not null)
                             {
-                                <img class="avatar-layer avatar-layer-@layer.ToString().ToLower()" src="@src" alt="@layer" />
+                                <img class="avatar-layer avatar-layer-@layer.ToString().ToLower()"
+                                     style="@GetLayerStyle(item)"
+                                     src="@item.ImagePath"
+                                     alt="@layer" />
                             }
                         }
                     </div>
@@ -247,6 +250,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
+    transform-origin: center top;
 }
 
 .avatar-layer-body  {
@@ -616,12 +620,33 @@
         AvatarSlot.Head
     ];
 
-    private string GetEquippedImagePath(AvatarSlot slot)
+    private static readonly Dictionary<string, string> AssetLayerStyleOverrides = new(StringComparer.OrdinalIgnoreCase)
     {
-        if (avatarData is null) return string.Empty;
-        if (!avatarData.EquippedObjectIds.TryGetValue(slot, out var id) || id is null) return string.Empty;
-        var item = avatarData.OwnedCosmetics.FirstOrDefault(i => i.ObjectId == id.Value);
-        return item?.ImagePath ?? string.Empty;
+        // Normalize newer tightly-cropped exports so they match legacy padded assets.
+        ["head.street.sweep"] = "transform: translateY(-2%) scale(0.64);",
+        ["head.high-roller.curls"] = "transform: translateY(-2%) scale(0.64);",
+        ["head.lucky.layers"] = "transform: translateY(-2%) scale(0.64);",
+
+        ["torso.shadow.hood"] = "transform: translateY(4%) scale(0.80);",
+        ["torso.royal.hood"] = "transform: translateY(4%) scale(0.80);",
+        ["torso.midnight.hood"] = "transform: translateY(4%) scale(0.80);",
+
+        ["shoe.jet.runners"] = "transform: translateY(16%) scale(0.72);",
+        ["shoe.royal.high-tops"] = "transform: translateY(16%) scale(0.72);"
+    };
+
+    private OwnedCosmeticDto? GetEquippedItem(AvatarSlot slot)
+    {
+        if (avatarData is null) return null;
+        if (!avatarData.EquippedObjectIds.TryGetValue(slot, out var id) || id is null) return null;
+        return avatarData.OwnedCosmetics.FirstOrDefault(i => i.ObjectId == id.Value);
+    }
+
+    private static string? GetLayerStyle(OwnedCosmeticDto item)
+    {
+        return AssetLayerStyleOverrides.TryGetValue(item.AssetKey, out var style)
+            ? style
+            : null;
     }
 
     private void GoToCustomization()

@@ -393,6 +393,9 @@ public class AvatarService
         new() { Slot = AvatarSlot.Head,  Name = "Lucky Cap",        AssetKey = "head.base.cap",       Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Head,  Name = "Dealer Top Hat",    AssetKey = "head.dealer.top-hat", Rarity = "Rare",      IsDefault = true  },
         new() { Slot = AvatarSlot.Head,  Name = "Neon Fringe",       AssetKey = "head.neon.fringe",    Rarity = "Epic",      IsDefault = false },
+        new() { Slot = AvatarSlot.Head,  Name = "Street Sweep",      AssetKey = "head.street.sweep",   Rarity = "Rare",      IsDefault = false },
+        new() { Slot = AvatarSlot.Head,  Name = "High Roller Curls", AssetKey = "head.high-roller.curls", Rarity = "Epic",   IsDefault = false },
+        new() { Slot = AvatarSlot.Head,  Name = "Lucky Layers",      AssetKey = "head.lucky.layers",   Rarity = "Legendary", IsDefault = false },
         new() { Slot = AvatarSlot.Face,  Name = "Face 1",            AssetKey = "face.base.smile",     Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Face,  Name = "Face 2",            AssetKey = "face.f2",             Rarity = "Uncommon",  IsDefault = false },
         new() { Slot = AvatarSlot.Face,  Name = "Face 3",            AssetKey = "face.f3",             Rarity = "Uncommon",  IsDefault = false },
@@ -407,12 +410,17 @@ public class AvatarService
         new() { Slot = AvatarSlot.Torso, Name = "Royal Blazer",      AssetKey = "torso.royal.blazer",  Rarity = "Epic",      IsDefault = true  },
         new() { Slot = AvatarSlot.Torso, Name = "Night Hoodie",      AssetKey = "torso.night.hoodie",  Rarity = "Rare",      IsDefault = false },
         new() { Slot = AvatarSlot.Torso, Name = "Dealer Shirt",      AssetKey = "torso.dealer.shirt",  Rarity = "Uncommon",  IsDefault = false },
+        new() { Slot = AvatarSlot.Torso, Name = "Shadow Hood",       AssetKey = "torso.shadow.hood",   Rarity = "Rare",      IsDefault = false },
+        new() { Slot = AvatarSlot.Torso, Name = "Royal Hood",        AssetKey = "torso.royal.hood",    Rarity = "Epic",      IsDefault = false },
+        new() { Slot = AvatarSlot.Torso, Name = "Midnight Hood",     AssetKey = "torso.midnight.hood", Rarity = "Legendary", IsDefault = false },
         new() { Slot = AvatarSlot.Legs,  Name = "Denim Pants",       AssetKey = "legs.base.denim",     Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Legs,  Name = "Velvet Trousers",   AssetKey = "legs.velvet.trousers",Rarity = "Rare",      IsDefault = true  },
         new() { Slot = AvatarSlot.Legs,  Name = "Racer Shorts",      AssetKey = "legs.racer.shorts",   Rarity = "Uncommon",  IsDefault = false },
         new() { Slot = AvatarSlot.Legs,  Name = "Royal Skirt",       AssetKey = "legs.royal.skirt",    Rarity = "Rare",      IsDefault = false },
         new() { Slot = AvatarSlot.Shoe,  Name = "Casino Sneakers",   AssetKey = "shoe.base.sneaker",   Rarity = "Common",    IsDefault = true  },
         new() { Slot = AvatarSlot.Shoe,  Name = "Golden Loafers",    AssetKey = "shoe.gold.loafer",    Rarity = "Epic",      IsDefault = true  },
+        new() { Slot = AvatarSlot.Shoe,  Name = "Jet Runners",       AssetKey = "shoe.jet.runners",    Rarity = "Rare",      IsDefault = false },
+        new() { Slot = AvatarSlot.Shoe,  Name = "Royal High-Tops",   AssetKey = "shoe.royal.high-tops",Rarity = "Epic",      IsDefault = false },
         // Pet slot — entries added when real pet assets are available.
     ];
 
@@ -426,6 +434,9 @@ public class AvatarService
             ["head.base.cap"]       = "Avatar/avatarhairs/hair1.png",
             ["head.dealer.top-hat"] = "Avatar/avatarhairs/hair2.png",
             ["head.neon.fringe"]    = "Avatar/avatarhairs/hair3.png",
+            ["head.street.sweep"]   = "Avatar/avatarhairs/newhair1.png",
+            ["head.high-roller.curls"] = "Avatar/avatarhairs/newhair2.png",
+            ["head.lucky.layers"]   = "Avatar/avatarhairs/newhair3.png",
             ["face.base.smile"]     = "Avatar/avatarfaces/f1.png",
             ["face.f2"]             = "Avatar/avatarfaces/f2.png",
             ["face.f3"]             = "Avatar/avatarfaces/f3.png",
@@ -440,12 +451,17 @@ public class AvatarService
             ["torso.royal.blazer"]  = "Avatar/avatartops/shirt3.png",
             ["torso.night.hoodie"]  = "Avatar/avatartops/hoodie1.png",
             ["torso.dealer.shirt"]  = "Avatar/avatartops/shirt2.png",
+            ["torso.shadow.hood"]   = "Avatar/avatartops/hood2.png",
+            ["torso.royal.hood"]    = "Avatar/avatartops/hood3.png",
+            ["torso.midnight.hood"] = "Avatar/avatartops/hood4.png",
             ["legs.base.denim"]     = "Avatar/avatarbottoms/shorts1.png",
             ["legs.velvet.trousers"]= "Avatar/avatarbottoms/skirt2.png",
             ["legs.racer.shorts"]   = "Avatar/avatarbottoms/shorts2.png",
             ["legs.royal.skirt"]    = "Avatar/avatarbottoms/skirt1.png",
             ["shoe.base.sneaker"]   = "Avatar/avatarshoes/shoes1.png",
-            ["shoe.gold.loafer"]    = "Avatar/avatarshoes/shoes2.png"
+            ["shoe.gold.loafer"]    = "Avatar/avatarshoes/shoes2.png",
+            ["shoe.jet.runners"]    = "Avatar/avatarshoes/shoe3.png",
+            ["shoe.royal.high-tops"] = "Avatar/avatarshoes/shoe4.png"
         };
 
         if (explicitMap.TryGetValue(normalized, out var mappedPath))
