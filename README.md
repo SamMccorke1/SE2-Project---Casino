@@ -48,6 +48,3 @@ Make sure `appsettings.json` contains a valid SQLite connection string, for exam
 }
 ```
 
-## Multiplayer demo
-
-For step-by-step local multiplayer testing across two accounts and two browser sessions, see [MULTIPLAYER_TESTING.md](./MULTIPLAYER_TESTING.md).

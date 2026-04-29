@@ -1,6 +1,7 @@
 @page "/login"
 @rendermode InteractiveServer
 @using System.Net
+@using System.Text.Json
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
@@ -180,14 +181,22 @@
 
             if (result.Ok)
             {
-                Console.WriteLine($"Login response received: {result.Text}");
-                
                 // Short delay to ensure cookie is set in the browser
                 await Task.Delay(200);
-                
-                // Navigate to home - new circuit will send auth cookie
-                Console.WriteLine("Redirecting to home with forceLoad=true");
-                Navigation.NavigateTo("/", forceLoad: true);
+
+                var isAdmin = false;
+                if (!string.IsNullOrEmpty(result.Text))
+                {
+                    try
+                    {
+                        var data = JsonSerializer.Deserialize<JsonElement>(result.Text);
+                        if (data.TryGetProperty("isAdmin", out var adminProp))
+                            isAdmin = adminProp.GetBoolean();
+                    }
+                    catch { }
+                }
+
+                Navigation.NavigateTo(isAdmin ? "/admin" : "/", forceLoad: true);
             }
             else
             {

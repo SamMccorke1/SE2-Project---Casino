@@ -40,6 +40,7 @@ builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<RouletteService>();
 builder.Services.AddScoped<SlotsService>();
 builder.Services.AddScoped<HorseRaceService>();
+builder.Services.AddScoped<IPlayerStatisticsService, PlayerStatisticsService>();
 builder.Services.AddSingleton<MultiplayerService>();
 
 builder.Services.AddAuthentication();
