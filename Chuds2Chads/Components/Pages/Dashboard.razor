@@ -5,6 +5,7 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject MultiplayerService MultiplayerService
 @inject LeaderboardService LeaderboardService
+@inject IPlayerStatisticsService PlayerStatisticsService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 @implements IAsyncDisposable
@@ -127,7 +128,7 @@
                         <div class="stat-value">@winRate%</div>
                         <div class="stat-label">Win Rate</div>
                     </div>
-                    <div class="stat-subtext">@dashboard.TotalWins wins / @dashboard.TotalGames games</div>
+                    <div class="stat-subtext">@DisplayTotalWins wins / @DisplayTotalGames games</div>
                 </div>
 
                 <div class="stat-card stat-card-streak">
@@ -471,6 +472,7 @@
     private CancellationTokenSource? heartbeatCts;
     private IReadOnlyList<LeaderboardEntryViewModel> leaderboardEntries = Array.Empty<LeaderboardEntryViewModel>();
     private bool showFullLeaderboard;
+    private PlayerStatisticsDto? playerStats;
 
     private int rankProgress;
     private int winRate;
@@ -528,10 +530,11 @@
             return;
         }
 
+        playerStats = await PlayerStatisticsService.GetPlayerStatisticsAsync(currentUserId);
         rankProgress = GetRankProgress(dashboard.Chips);
-        winRate = dashboard.TotalGames == 0 ? 0 : (int)Math.Round((double)dashboard.TotalWins / dashboard.TotalGames * 100);
-        winStreak = 0;
-        bestStreak = 0;
+        winRate = playerStats.TotalGamesPlayed == 0 ? 0 : (int)Math.Round((double)playerStats.TotalWins / playerStats.TotalGamesPlayed * 100);
+        winStreak = playerStats.CurrentWinStreak;
+        bestStreak = playerStats.BestWinStreak;
 
         blackjackTables = dashboard.JoinableRooms.Count(room => room.Game == GameType.Blackjack && !room.IsClosing);
         pokerTables = dashboard.JoinableRooms.Count(room => room.Game == GameType.Poker && !room.IsClosing);
@@ -704,6 +707,8 @@
     };
 
     private static string SignedChips(long chips) => chips >= 0 ? $"+{FormatChips(chips)}" : $"-{FormatChips(Math.Abs(chips))}";
+    private int DisplayTotalWins => playerStats?.TotalWins ?? dashboard?.TotalWins ?? 0;
+    private int DisplayTotalGames => playerStats?.TotalGamesPlayed ?? dashboard?.TotalGames ?? 0;
 
     public ValueTask DisposeAsync()
     {

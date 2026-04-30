@@ -3,162 +3,192 @@
     min-height: 100vh;
     padding: 2rem 1.25rem 3rem;
     overflow: hidden;
-    background:
-        radial-gradient(circle at top left, rgba(255, 215, 0, 0.08), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(0, 255, 200, 0.06), transparent 25%),
-        linear-gradient(180deg, #08111f 0%, #0d1626 45%, #0b1220 100%);
-    color: #f4f7fb;
+    background: linear-gradient(135deg, #0a0118 0%, #1a0933 100%);
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
 }
 
 .stats-bg-grid {
-    position: absolute;
+    position: fixed;
     inset: 0;
     background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 32px 32px;
-    opacity: 0.18;
+        linear-gradient(rgba(0, 255, 65, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 65, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: statsGridPan 30s linear infinite;
     pointer-events: none;
 }
 
 .stats-bg-glow {
-    position: absolute;
-    width: 420px;
-    height: 420px;
+    position: fixed;
+    width: 560px;
+    height: 560px;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.22;
+    filter: blur(120px);
+    opacity: 0.16;
     pointer-events: none;
+    animation: statsGlowFloat 20s ease-in-out infinite;
 }
 
 .stats-bg-glow-1 {
-    top: -100px;
-    left: -80px;
-    background: #00d9ff;
+    top: -12%;
+    left: -10%;
+    background: radial-gradient(circle, #00ff41, transparent);
 }
 
 .stats-bg-glow-2 {
-    bottom: -120px;
-    right: -80px;
-    background: #ffd54a;
+    right: -10%;
+    bottom: -14%;
+    background: radial-gradient(circle, #ffd700, transparent);
+    animation-delay: 10s;
+}
+
+@keyframes statsGridPan {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+@keyframes statsGlowFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(32px, -28px) scale(1.08); }
 }
 
 .stats-wrapper {
     position: relative;
     z-index: 1;
-    max-width: 1280px;
+    max-width: 1380px;
     margin: 0 auto;
+}
+
+.stats-back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+    padding: 0.7rem 1.15rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 255, 65, 0.28);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    font-weight: 700;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.stats-back-button:hover {
+    transform: translateY(-1px);
+    color: #00ff41;
+    border-color: rgba(0, 255, 65, 0.48);
+    background: rgba(0, 255, 65, 0.08);
 }
 
 .stats-header-card,
 .breakdown-card,
 .stats-message-card,
 .stat-card {
-    background: rgba(13, 22, 38, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow:
-        0 12px 32px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255,255,255,0.04);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(14px);
 }
 
 .stats-header-card {
     border-radius: 22px;
-    padding: 1.5rem 1.5rem 1.25rem;
+    padding: 1.75rem;
     margin-bottom: 1.5rem;
-}
-
-.stats-back-button {
-    display: inline-block;
-    margin-bottom: 1rem;
-    color: #ffd54a;
-    text-decoration: none;
-    font-weight: 700;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.stats-back-button:hover {
-    color: #ffffff;
-    transform: translateX(-3px);
 }
 
 .stats-title {
     margin: 0;
-    font-size: clamp(2rem, 4vw, 3rem);
-    line-height: 1.05;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #ffffff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    letter-spacing: 0.08rem;
+    line-height: 1.02;
 }
 
 .stats-subtitle {
-    margin: 0.5rem 0 0;
-    color: #9fb1c9;
+    margin: 0.6rem 0 0;
+    color: rgba(255, 255, 255, 0.64);
     font-size: 1rem;
 }
 
 .stats-overview-grid {
     display: grid;
-    grid-template-columns: repeat( auto-fit, minmax(220px, 1fr) );
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
     margin-bottom: 1.5rem;
 }
 
 .stat-card {
+    position: relative;
+    overflow: hidden;
     border-radius: 20px;
-    padding: 1.15rem 1.1rem;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.45rem;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    gap: 0.5rem;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--card-accent, #00ff41), transparent);
+    opacity: 0;
+    transition: opacity 0.25s ease;
 }
 
 .stat-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(255, 213, 74, 0.35);
-    box-shadow:
-        0 18px 36px rgba(0, 0, 0, 0.38),
-        0 0 0 1px rgba(255, 213, 74, 0.08);
+    transform: translateY(-4px);
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 22px 52px rgba(0, 0, 0, 0.34);
+}
+
+.stat-card:hover::before {
+    opacity: 1;
 }
 
 .stat-card.featured {
+    --card-accent: #00ff41;
     background:
-        linear-gradient(135deg, rgba(255, 213, 74, 0.16), rgba(13, 22, 38, 0.88)),
-        rgba(13, 22, 38, 0.82);
-    border-color: rgba(255, 213, 74, 0.22);
+        linear-gradient(135deg, rgba(0, 255, 65, 0.1), rgba(255, 215, 0, 0.06)),
+        rgba(255, 255, 255, 0.03);
 }
 
 .stat-card.money {
-    border-left: 3px solid rgba(255, 213, 74, 0.55);
+    --card-accent: #ffd700;
 }
 
 .stat-label {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: #91a5c2;
+    color: rgba(255, 255, 255, 0.52);
     font-weight: 700;
 }
 
 .stat-value {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #ffffff;
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.45rem;
     line-height: 1.15;
+    color: #ffffff;
     word-break: break-word;
 }
 
 .positive {
-    color: #4ee08b;
+    color: #00ff41;
 }
 
 .negative {
-    color: #ff6b7d;
+    color: #ff5f86;
 }
 
 .breakdown-card {
     border-radius: 24px;
-    padding: 1.25rem;
+    padding: 1.35rem;
 }
 
 .breakdown-header {
@@ -167,57 +197,55 @@
 
 .breakdown-header h2 {
     margin: 0;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #ffffff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.06rem;
 }
 
 .breakdown-header p {
     margin: 0.35rem 0 0;
-    color: #9fb1c9;
-    font-size: 0.96rem;
+    color: rgba(255, 255, 255, 0.62);
 }
 
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
-    border-radius: 16px;
+    border-radius: 18px;
 }
 
 .stats-table {
     width: 100%;
-    border-collapse: collapse;
     min-width: 980px;
+    border-collapse: collapse;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 18px;
 }
 
 .stats-table thead th {
-    background: linear-gradient(180deg, rgba(255, 213, 74, 0.16), rgba(255, 213, 74, 0.08));
-    color: #fef3c7;
+    padding: 1rem 0.95rem;
     text-align: left;
-    padding: 0.95rem 0.9rem;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 800;
-    letter-spacing: 0.05em;
     text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    letter-spacing: 0.08em;
+    color: #fef3c7;
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.18), rgba(0, 255, 65, 0.08));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .stats-table tbody td {
-    padding: 0.95rem 0.9rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    color: #e7eef9;
-    font-size: 0.95rem;
-    background: rgba(8, 15, 28, 0.55);
+    padding: 0.95rem;
+    color: rgba(255, 255, 255, 0.88);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .stats-table tbody tr:nth-child(even) td {
-    background: rgba(12, 20, 34, 0.72);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .stats-table tbody tr:hover td {
-    background: rgba(255, 213, 74, 0.08);
+    background: rgba(0, 255, 65, 0.07);
 }
 
 .game-name {
@@ -236,13 +264,13 @@
 }
 
 .stats-message-card.error {
-    border-color: rgba(255, 107, 125, 0.35);
-    background: rgba(60, 10, 20, 0.72);
+    border-color: rgba(255, 95, 134, 0.38);
+    background: rgba(92, 14, 38, 0.64);
 }
 
 .stats-loading {
-    color: #dbe7f7;
     margin: 0;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 @media (max-width: 768px) {
@@ -258,7 +286,7 @@
     }
 
     .stats-title {
-        font-size: 2rem;
+        font-size: 2.4rem;
     }
 
     .stat-value {

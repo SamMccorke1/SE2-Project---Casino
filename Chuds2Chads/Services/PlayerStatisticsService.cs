@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Chuds2Chads.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Chuds2Chads.Data;
 
@@ -19,6 +20,8 @@ namespace Chuds2Chads.Services
         public int TotalGamesPlayed { get; set; }
         public int TotalWins { get; set; }
         public int TotalLosses { get; set; }
+        public int CurrentWinStreak { get; set; }
+        public int BestWinStreak { get; set; }
 
         public double OverallWinLossRatio =>
             TotalLosses == 0 ? TotalWins : (double)TotalWins / TotalLosses;
@@ -119,6 +122,7 @@ long amountLost = Math.Max(0, amountWagered - amountWon);
             int totalGamesPlayed = gameStats.Sum(g => g.TimesPlayed);
             int totalWins = gameStats.Sum(g => g.Wins);
             int totalLosses = gameStats.Sum(g => g.Losses);
+            var streaks = CalculateWinStreaks(transactions);
 
             return new PlayerStatisticsDto
             {
@@ -130,9 +134,81 @@ long amountLost = Math.Max(0, amountWagered - amountWon);
                 TotalGamesPlayed = totalGamesPlayed,
                 TotalWins = totalWins,
                 TotalLosses = totalLosses,
+                CurrentWinStreak = streaks.Current,
+                BestWinStreak = streaks.Best,
                 MostPlayedGame = mostPlayedGame,
                 GameStats = gameStats.OrderByDescending(g => g.TimesPlayed).ToList()
             };
+        }
+
+        private static (int Current, int Best) CalculateWinStreaks(List<Transaction> transactions)
+        {
+            if (transactions.Count == 0)
+            {
+                return (0, 0);
+            }
+
+            var orderedTransactions = transactions
+                .Where(t => !string.IsNullOrWhiteSpace(t.Reference))
+                .OrderBy(t => t.CreatedUtc)
+                .ToList();
+
+            var bets = orderedTransactions
+                .Where(t => t.Type == TransactionType.BetPlaced)
+                .ToList();
+
+            if (bets.Count == 0)
+            {
+                return (0, 0);
+            }
+
+            var payouts = orderedTransactions
+                .Where(t => t.Type == TransactionType.Payout)
+                .ToList();
+
+            var results = new List<bool>(bets.Count);
+
+            for (var index = 0; index < bets.Count; index++)
+            {
+                var currentBet = bets[index];
+                var nextBetUtc = index + 1 < bets.Count ? bets[index + 1].CreatedUtc : DateTime.MaxValue;
+                var betGame = GetGameNameFromReference(currentBet.Reference!);
+
+                var payout = payouts.FirstOrDefault(p =>
+                    p.CreatedUtc >= currentBet.CreatedUtc &&
+                    p.CreatedUtc < nextBetUtc &&
+                    string.Equals(GetGameNameFromReference(p.Reference ?? string.Empty), betGame, StringComparison.OrdinalIgnoreCase));
+
+                results.Add(payout is not null && payout.Amount > Math.Abs(currentBet.Amount));
+            }
+
+            var best = 0;
+            var running = 0;
+            foreach (var result in results)
+            {
+                if (result)
+                {
+                    running++;
+                    best = Math.Max(best, running);
+                }
+                else
+                {
+                    running = 0;
+                }
+            }
+
+            var current = 0;
+            for (var index = results.Count - 1; index >= 0; index--)
+            {
+                if (!results[index])
+                {
+                    break;
+                }
+
+                current++;
+            }
+
+            return (current, best);
         }
 
         private static string GetGameNameFromReference(string reference)

@@ -53,6 +53,23 @@
 }
 .back-link:hover { color: #00e676; }
 
+.nav-leave-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid #ffd700;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.nav-leave-link:hover {
+    color: #000;
+    background: #ffd700;
+}
+
 .game-title-header {
     font-family: 'Bebas Neue', 'Impact', sans-serif;
     font-size: 2rem;
