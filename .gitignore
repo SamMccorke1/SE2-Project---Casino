@@ -12,3 +12,4 @@
 *.sqlite
 *.cache.json
 *.FileListAbsolute.txt
+*/_buildcheck
