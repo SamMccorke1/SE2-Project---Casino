@@ -8,7 +8,7 @@ namespace Chuds2Chads.Services;
 
 public class MultiplayerService
 {
-    private static readonly TimeSpan OfflineThreshold = TimeSpan.FromSeconds(100);
+    private static readonly TimeSpan OfflineThreshold = TimeSpan.FromSeconds(90);
     private static readonly TimeSpan DisconnectGracePeriod = TimeSpan.FromMinutes(1);
 
     private readonly IServiceScopeFactory _scopeFactory;
