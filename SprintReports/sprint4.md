@@ -55,7 +55,7 @@ Planned Time: 5 hours
 Actual Time: 6 hours
 
 Task 4
-Task Owner: Rio
+Task Owner: Reo
 Task Title: Additional Game Development
 Task Description:
 Worked on developing additional games to expand the casino platform. Implemented core gameplay logic and began integrating the games into the overall web interface.
@@ -123,7 +123,7 @@ The team discussed progress toward completing sprint goals and preparing the pro
 Samuel reported finishing the multiplayer lobby system and improving the visual gameplay interface and helping with merging issues to get them resolved.
 Matthew was not in class but communicated that he has completed merging issues. 
 Lucas was not in class but communicated that he reported that authentication features were functioning correctly.
-Rio was not in class but communicated that he continued working on integrating additional games into the platform.
+Reo was not in class but communicated that he continued working on integrating additional games into the platform.
 Caleb was not in class but communicated that he finalized improvements to the database system.
 
  
